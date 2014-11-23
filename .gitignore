@@ -1,0 +1,6 @@
+*.a
+*.so
+*.o
+*.exe
+a.out
+tmp
