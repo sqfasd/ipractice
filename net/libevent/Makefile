@@ -1,7 +1,7 @@
-all: http_client multi_thread
+all: test_http_client multi_thread
 
-http_client:
-	g++ http_client.cc -o http_client.exe -levent
+test_http_client:
+	g++ -std=c++11 test_http_client.cc http_client.cc -o test_http_client.exe -levent
 
 multi_thread:
 	gcc -c -g event_msgqueue.c

@@ -1,100 +1,92 @@
-#include <unistd.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <errno.h>
+#include "http_client.h"
 #include <string.h>
-#include <event2/bufferevent.h>
-#include <event2/buffer.h>
-#include <event2/listener.h>
-#include <event2/util.h>
-#include <event2/http.h>
 
-static struct event_base *base;
+using std::string;
 
-struct Client {
-  char* host;
-  int port;
-  char* uri;
-  int id;
-};
+HttpClient::HttpClient(struct event_base* evbase,
+    const HttpRequestOption& option)
+    : evbase_(evbase),
+      evconn_(NULL),
+      evreq_(NULL),
+      option_(option) {
+}
 
-Client* client;
+HttpClient::~HttpClient() {
+}
 
-void request(Client* client);
+void HttpClient::StartRequest() {
+  /*
+  struct evhttp_connection* evcon = evhttp_connection_base_new(base, NULL, client->host, client->port);
+  */
+  evconn_ = evhttp_connection_base_new(evbase_,
+                                       NULL,
+                                       option_.host.c_str(),
+                                       option_.port);
 
-static void http_request_done(struct evhttp_request *req, void *ctx) {
-	char buffer[256];
-	int nread;
+  evreq_ = evhttp_request_new(&HttpClient::OnRequestDone, this);
+  evhttp_request_set_chunked_cb(evreq_, &HttpClient::OnChunk);
 
-  if (req == NULL || evhttp_request_get_response_code(req) == 0) {
-    /* If req is NULL, it means an error occursurred, but
-     *  * sadly we are mostly left guessing what the error
-     *   * mainight have been.  We'll do our best... */
-    int errcode = EVUTIL_SOCKET_ERROR();
-    fprintf(stdout, "socket error = %s (%d)\n",
-            evutil_socket_error_to_string(errcode),
-            errcode);
+  struct evkeyvalq* output_headers = evhttp_request_get_output_headers(evreq_);
+  evhttp_add_header(output_headers, "Host", option_.host.c_str());
 
-    sleep(5);
-    request(client);
-    return;
+  enum evhttp_cmd_type cmd = EVHTTP_REQ_GET;
+  if (option_.method == "post") {
+    cmd = EVHTTP_REQ_POST;
+  } else {
+    // TODO other http methods
+  }
+  if (cmd == EVHTTP_REQ_POST && !option_.data.empty()) {
+    evbuffer_add(evreq_->output_buffer,
+                 option_.data.c_str(),
+                 option_.data.length());
+    evhttp_add_header(output_headers,
+                      "Content-Type",
+                      "application/x-www-form-urlencoded");
+    fprintf(stdout, "post data: %s\n", option_.data.c_str());
   }
 
-	fprintf(stdout, "Response line: %d\n",
-	    evhttp_request_get_response_code(req));
-
-	while ((nread = evbuffer_remove(evhttp_request_get_input_buffer(req),
-		    buffer, sizeof(buffer)))
-	       > 0) {
-		fwrite(buffer, nread, 1, stdout);
-	}
-}
-
-void http_chunk_cb(struct evhttp_request* req, void* arg) {
-  printf("http_chunk_cb:\n");
-  char buffer[256];
-  int nread;
-	while ((nread = evbuffer_remove(evhttp_request_get_input_buffer(req),
-		    buffer, sizeof(buffer)))
-	       > 0) {
-		fwrite(buffer, nread, 1, stdout);
-	}
-}
-
-void request(Client* client) {
-  printf("request()\n");
-  // TODO error checking
-  struct bufferevent *bev = bufferevent_socket_new(base, -1, BEV_OPT_CLOSE_ON_FREE);
-  struct evhttp_connection* evcon = evhttp_connection_base_new(base, NULL, client->host, client->port);
-  struct evhttp_request *req = evhttp_request_new(http_request_done, client);
-  evhttp_request_set_chunked_cb(req, http_chunk_cb);
-  struct evkeyvalq* output_headers = evhttp_request_get_output_headers(req);
-  evhttp_add_header(output_headers, "Host", client->host);
-  evhttp_add_header(output_headers, "Connection", "close");
-  int ret = evhttp_make_request(evcon, req, EVHTTP_REQ_GET, client->uri);
+  const char* uri = option_.path.empty() ? "/" : option_.path.c_str();
+  int ret = evhttp_make_request(evconn_, evreq_, cmd, uri);
   if (ret != 0) {
     fprintf(stderr, "evhttp_make_request() failed\n");
   }
 }
 
-int main(int argc, char* argv[]) {
-  if (argc != 5) {
-    printf("usage: %s <host> <port> <path> <count>\n", argv[0]);
-    return 0;
+void HttpClient::OnRequestDone(struct evhttp_request* req, void* ctx) {
+  HttpClient* self = (HttpClient*)ctx;
+  int code = 0;
+  if (req == NULL || (code = evhttp_request_get_response_code(req)) == 0) {
+    int errcode = EVUTIL_SOCKET_ERROR();
+    fprintf(stderr, "request failed: %s (%d)\n",
+            evutil_socket_error_to_string(errcode), errcode);
+    return;
   }
-  base = event_base_new();
-  assert(base);
-
-  client = new Client();
-  client->host = argv[1];
-  client->port = atoi(argv[2]);
-  client->uri = argv[3];
-  const int count = atoi(argv[4]);
-  for (int i = 0; i < count; ++i) {
-    request(client);
+  if (code != 200) {
+    fprintf(stderr, "failed with return code: %d\n", code);
+    return;
   }
 
-  event_base_dispatch(base);
+  fprintf(stdout, "request sucess:\n");
 
-  event_base_free(base);
+  struct evbuffer* evbuf = evhttp_request_get_input_buffer(req);   
+  int len = evbuffer_get_length(evbuf);
+  std::shared_ptr<string> buffer(new string());
+  buffer->reserve(len+1);
+  buffer->append((char*)evbuffer_pullup(evbuf, -1), len);
+  if (self->request_done_cb_) {
+    self->request_done_cb_(self, *buffer.get());
+  }
+}
+
+void HttpClient::OnChunk(struct evhttp_request* req, void* ctx) {
+  fprintf(stdout, "on chunker: \n");
+  HttpClient* self = (HttpClient*)ctx;
+  struct evbuffer* evbuf = evhttp_request_get_input_buffer(req);   
+  int len = evbuffer_get_length(evbuf);
+  std::shared_ptr<string> buffer(new string());
+  buffer->reserve(len+1);
+  buffer->append((char*)evbuffer_pullup(evbuf, -1), len);
+  if (self->chunk_cb_) {
+    self->chunk_cb_(self, *buffer.get());
+  }
 }
