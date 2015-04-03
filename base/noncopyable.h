@@ -1,6 +1,8 @@
 #ifndef NONCOPYABLE_H_
 #define NONCOPYABLE_H_
 
+namespace base {
+
 class NonCopyable {
  public:
   NonCopyable& operator=(const NonCopyable&) = delete;
@@ -11,4 +13,5 @@ class NonCopyable {
   ~NonCopyable() = default;
 };
 
+}  // namespace base
 #endif  // NONCOPYABLE_H_

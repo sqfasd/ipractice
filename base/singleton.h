@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "noncopyable.h"
 
-namespace tcpmany {
+namespace base {
 
 template <class T>
 class Singleton : public NonCopyable {
@@ -37,5 +37,5 @@ pthread_once_t Singleton<T>::ponce_ = PTHREAD_ONCE_INIT;
 template<typename T>
 T* Singleton<T>::instance_ = NULL;
 
-}
+}  // namespace base
 #endif

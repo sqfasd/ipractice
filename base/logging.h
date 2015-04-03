@@ -6,13 +6,13 @@
 #include <sstream>
 #include <thread>
 
-#define LOG_LEVEL tcpmany::LOG_INFO
+#define LOG_LEVEL base::LOG_INFO
 #define LOG_VERBOSE_LEVEL 3
 
 #define LOG(severity) \
-  if (LOG_LEVEL <= tcpmany::LOG_##severity) \
-    tcpmany::SimpleLogger(__FILE__, __LINE__, #severity, \
-        tcpmany::LOG_##severity).Stream()
+  if (LOG_LEVEL <= base::LOG_##severity) \
+    base::SimpleLogger(__FILE__, __LINE__, #severity, \
+        base::LOG_##severity).Stream()
 
 #define VLOG(v) \
   if (LOG_VERBOSE_LEVEL >= v) LOG(INFO)
@@ -21,7 +21,7 @@
   if (!(condition)) \
     LOG(FATAL) << "check condition [" << #condition << "] failed: "
 
-namespace tcpmany {
+namespace base {
 
 const int LOG_INFO = 0;
 const int LOG_WARNING = 1;

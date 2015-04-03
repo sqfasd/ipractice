@@ -7,7 +7,7 @@
 
 #include "noncopyable.h"
 
-namespace tcpmany {
+namespace base {
 
 template<class T>
 class BlockingQueue : public NonCopyable {
@@ -97,6 +97,6 @@ class BoundedBlockingQueue : public BlockingQueue<T> {
   const size_t max_count_;
 };
 
-}
+}  // namespace base
 
 #endif  // BLOCKING_QUEUE_H_
