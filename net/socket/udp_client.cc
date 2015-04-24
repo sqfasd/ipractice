@@ -2,7 +2,6 @@
 
 const char* CLIENT_IP = "127.0.0.1";
 const int CLIENT_START_PORT = 20000;
-const int EPOLL_EVENT_BATCH_SIZE = 4096;
 
 struct ClientInfo {
   int fd;
@@ -103,7 +102,7 @@ int main(int argc, char **argv) {
       break;
     }
     int nfds = ::epoll_wait(epfd, events, ARRAY_LEN(events), TIMEOUT_MS);
-    LOG(INFO) << nfds << " events active";
+    // VLOG(3) << nfds << " events active";
     int n;
     for (int i = 0; i < nfds; ++i) {
       ClientInfo* client_info = (ClientInfo*)events[i].data.ptr;
@@ -145,7 +144,8 @@ int main(int argc, char **argv) {
           ::shutdown(fd, SHUT_RDWR);
         } else if (n == -1) {
           ++g_total_error;
-          LOG(ERROR) << CERROR("recvfrom");
+          LOG(ERROR) << CERROR("read") << ", fd=" << fd;
+          ::epoll_ctl(epfd, EPOLL_CTL_DEL, fd, &events[i]);
           ::shutdown(fd, SHUT_RDWR);
         }
       }

@@ -25,6 +25,7 @@ using namespace std;
 #define ARRAY_LEN(arr) (sizeof(arr) / sizeof(arr[0]))
 
 const int MAX_BUF_LEN = 512;
+const int EPOLL_EVENT_BATCH_SIZE = 4096;
 
 inline int CreateUdpSocket(struct sockaddr_in& addr, bool reuse_addr) {
   int fd = ::socket(AF_INET, SOCK_DGRAM, 0);
@@ -35,7 +36,11 @@ inline int CreateUdpSocket(struct sockaddr_in& addr, bool reuse_addr) {
   int ret;
   if (reuse_addr) {
     int opt=1;
-    ret = ::setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt,sizeof(opt));
+    ret = ::setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    if (ret != 0) {
+      return ret;
+    }
+    ret = ::setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
     if (ret != 0) {
       return ret;
     }
