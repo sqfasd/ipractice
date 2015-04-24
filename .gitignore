@@ -4,3 +4,7 @@
 *.exe
 a.out
 tmp
+log
+*.log
+build
+node_modules
