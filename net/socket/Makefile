@@ -7,4 +7,4 @@ udp_client:
 	g++ -std=c++11 -pthread udp_client.cc -I ../../ -o udp_client.exe
 
 clean:
-	rm -f udp_server udp_client *.o
+	rm -f *.exe *.o
