@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
   struct epoll_event ev;
   for (int i = 0; i < concurrency; ++i) {
     if (client_fds[i] != -1) {
-      ev.events = EPOLLOUT | EPOLLIN | EPOLLET;
+      ev.events = EPOLLOUT | EPOLLET;
       ev.data.fd = client_fds[i];
       ClientInfo* client = new ClientInfo();
       client->fd = client_fds[i];
@@ -113,28 +113,7 @@ int main(int argc, char **argv) {
         LOG(ERROR) << "epoll error";
         ::epoll_ctl(epfd, EPOLL_CTL_DEL, fd, &events[i]);
         ::shutdown(fd, SHUT_RDWR);
-      }
-      if (events[i].events & (EPOLLIN | EPOLLPRI)) {
-        n = ::read(fd, buff, buff_len);
-        if (n > 0) {
-          ++g_total_recv;
-          client_info->recv_num++;
-          if (client_info->recv_num >= req_num_per_client) {
-            ++g_total_close2;
-            ::epoll_ctl(epfd, EPOLL_CTL_DEL, fd, &events[i]);
-            ::shutdown(fd, SHUT_RDWR);
-          }
-        } else if (n == 0) {
-          ++g_total_close1;
-          ::epoll_ctl(epfd, EPOLL_CTL_DEL, fd, &events[i]);
-          ::shutdown(fd, SHUT_RDWR);
-        } else if (n == -1) {
-          ++g_total_error;
-          LOG(ERROR) << CERROR("recvfrom");
-          ::shutdown(fd, SHUT_RDWR);
-        }
-      }
-      if (events[i].events & EPOLLOUT) {
+      } else if (events[i].events & EPOLLOUT) {
         n = ::write(fd, buff, buff_len);
         if (n <= 0) {
           ++g_total_error;
@@ -144,10 +123,30 @@ int main(int argc, char **argv) {
         } else {
           ++g_total_send;
           client_info->send_num++;
-          if (client_info->send_num >= req_num_per_client) {
-            events[i].events &= ~EPOLLOUT;
+          events[i].events = EPOLLIN | EPOLLET;
+          ::epoll_ctl(epfd, EPOLL_CTL_MOD, fd, &events[i]);
+        }
+      } else if (events[i].events & EPOLLIN) {
+        n = ::read(fd, buff, buff_len);
+        if (n > 0) {
+          ++g_total_recv;
+          client_info->recv_num++;
+          if (client_info->recv_num >= req_num_per_client) {
+            ++g_total_close2;
+            ::epoll_ctl(epfd, EPOLL_CTL_DEL, fd, &events[i]);
+            ::shutdown(fd, SHUT_RDWR);
+          } else {
+            events[i].events = EPOLLOUT | EPOLLET;
             ::epoll_ctl(epfd, EPOLL_CTL_MOD, fd, &events[i]);
           }
+        } else if (n == 0) {
+          ++g_total_close1;
+          ::epoll_ctl(epfd, EPOLL_CTL_DEL, fd, &events[i]);
+          ::shutdown(fd, SHUT_RDWR);
+        } else if (n == -1) {
+          ++g_total_error;
+          LOG(ERROR) << CERROR("recvfrom");
+          ::shutdown(fd, SHUT_RDWR);
         }
       }
     }
