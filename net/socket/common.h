@@ -27,7 +27,7 @@ using namespace std;
 const int MAX_BUF_LEN = 512;
 const int EPOLL_EVENT_BATCH_SIZE = 4096;
 
-inline int CreateUdpSocket(struct sockaddr_in& addr, bool reuse_addr) {
+inline int CreateUdpSocket(const struct sockaddr_in& addr, bool reuse_addr) {
   int fd = ::socket(AF_INET, SOCK_DGRAM, 0);
   if (fd == -1) {
     return fd;
