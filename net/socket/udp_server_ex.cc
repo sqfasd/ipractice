@@ -24,22 +24,21 @@ int main(int argc, char **argv) {
   listen_addr.sin_port = ::htons(port);
   listen_addr.sin_addr.s_addr = INADDR_ANY;
 
-  int listen_fd = CreateUdpSocket(listen_addr, true);
-  CHECK(listen_fd != -1) << CERROR("CreateUdpSocket");
-  LOG(INFO) << "listen_fd = " << listen_fd;
-  CHECK(SetNonblocking(listen_fd) == 0) << CERROR("SetNonblocking");
-
-  int epfd = ::epoll_create(1);
-  CHECK(epfd != -1) << CERROR("epoll_create");
-  struct epoll_event ev;
-  EpollData* listen_data = new EpollData(listen_fd);
-  ev.data.ptr = listen_data;
-  ev.events = EPOLLIN | EPOLLET;
-  ::epoll_ctl(epfd, EPOLL_CTL_ADD, listen_fd, &ev);
-
   thread* threads = new thread[concurrency];
   for (int i = 0; i < concurrency; ++i) {
-    threads[i] = thread([epfd, listen_fd, listen_addr, i]() {
+    threads[i] = thread([listen_addr, i]() {
+      int listen_fd = CreateUdpSocket(listen_addr, true);
+      CHECK(listen_fd != -1) << CERROR("CreateUdpSocket");
+      LOG(INFO) << "listen_fd = " << listen_fd;
+      CHECK(SetNonblocking(listen_fd) == 0) << CERROR("SetNonblocking");
+
+      int epfd = ::epoll_create(1);
+      CHECK(epfd != -1) << CERROR("epoll_create");
+      struct epoll_event ev;
+      EpollData* listen_data = new EpollData(listen_fd);
+      ev.data.ptr = listen_data;
+      ev.events = EPOLLIN | EPOLLET;
+      ::epoll_ctl(epfd, EPOLL_CTL_ADD, listen_fd, &ev);
       struct sockaddr_in client_addr;
       int addr_len = sizeof(client_addr);
       const int TIMEOUT_MS = 5000;
@@ -130,6 +129,7 @@ int main(int argc, char **argv) {
           }
         }
       }
+      ::shutdown(listen_fd, SHUT_RDWR);
     });
   }
 
@@ -137,8 +137,6 @@ int main(int argc, char **argv) {
     threads[i].join();
   }
   delete [] threads;
-
-  ::shutdown(listen_fd, SHUT_RDWR);
 
   return 0;
 }
