@@ -27,6 +27,9 @@ void pubCallback(redisAsyncContext *c, void *r, void *priv) {
   if (reply == NULL) return;
   cout << "reply->type=" << reply->type << endl;
   cout << "reply->elements=" << reply->elements << endl;
+  if (reply->type == REDIS_REPLY_INTEGER) {
+    cout << reply->integer << endl;
+  }
 }
 
 void connectCallback(const redisAsyncContext *c, int status) {
