@@ -1,0 +1,22 @@
+{
+  "name": "flatui",
+  "version": "0.0.0",
+  "homepage": "https://github.com/sqfasd/ipractice",
+  "authors": [
+    "sqfasd <sqf1225@foxmail.com>"
+  ],
+  "moduleType": [
+    "globals"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "flat-ui": "~2.2.2"
+  }
+}
