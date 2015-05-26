@@ -1,0 +1,63 @@
+<html>
+<body>
+<script>$ = jQuery = require("./jquery-2.1.1.min.js")</script>
+<script type="text/javascript" src="jquery.cookie.js"></script>
+<script type="text/javascript" src="jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="jquery.jsonrpcclient.js"></script>
+<script type="text/javascript" src="jquery.mobile.min.js"></script>
+<script type="text/javascript" src="jquery.json-2.4.min.js"></script>
+<script type="text/javascript" src="jquery.FSRTC.js"></script>
+<script type="text/javascript" src="jquery.verto.js"></script>
+<script type="text/javascript" src="app.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    init();
+  });
+</script>
+<div id="container">
+  <div id="loginBox">
+    <div>
+      <label for="name">Name</label>
+      <input type="text" id="name">
+    </div>
+    <div>
+      <label for="name">Password</label>
+      <input type="password" id="password">
+    </div>
+    <div>
+      <button id="loginButton" onclick="login()">Login</button>
+    </div>
+  </div>
+
+  <div id="devices">
+    <legend><b>Camera</b></legend>
+    <select id="usecamera"></select>
+    <legend><b>Mic</b></legend>
+    <select id="usemic"></select>
+  </div>
+
+  <div id="callBox">
+    <div>
+      <label for="name">Nick Name</label>
+      <input type="text" id="nickname">
+    </div>
+    <div>
+      <label for="name">Cid</label>
+      <input type="text" id="cid">
+    </div>
+    <div>
+      <label for="name">Room Id</label>
+      <input type="text" id="roomid">
+    </div>
+    <div>
+      <button id="callButton" onclick="call()">Call</button>
+    </div>
+  </div>
+
+  <div id="videoBox">
+    <video id="remoteVideo" autopaly></video>
+    <video id="localVideo" autopaly></video>
+  </div>
+</div>
+</body>
+</html>
