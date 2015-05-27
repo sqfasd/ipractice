@@ -2,7 +2,8 @@ module.exports = {
   template: require('./template.html'),
   el: '#app',
   data: {
-    currentView: ''
+    currentView: '',
+    params: {}
   },
   components: {
     'login': require('../login'),

@@ -1,1 +1,19 @@
-<p>This is chat view</p>
+<div id="videoBox">
+  <video id="remoteVideo" autopaly></video>
+  <video id="localVideo" autopaly></video>
+</div>
+<div id="msgPanel">
+  <ul style="list-style-type:none">
+    <li v-repeat="textMessages">
+    <span>{{from}}:</span>
+    <br/>
+    {{body}}
+    <br/>
+    </li>
+  </ul>
+</div>
+<div id="sendButton">
+  <button v-on="click: onSend">send</button>
+</div>
+<div id="memberList">
+</div>

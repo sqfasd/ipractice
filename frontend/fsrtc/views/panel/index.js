@@ -3,9 +3,18 @@ module.exports = {
   replace: true,
   data: function() {
     return {
-      name: '',
-      passwd: ''
+      ownerRooms: [
+        "3500",
+        "3600"
+      ],
+      otherRooms: [
+        "3501",
+        "3601"
+      ]
     }
+  },
+  compiled: function() {
+    this.ownerRooms.push("3700");
   },
   method: {
     onSubmit: function(e) {

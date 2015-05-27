@@ -7,9 +7,11 @@ module.exports = {
       passwd: ''
     }
   },
-  method: {
+  methods: {
     onSubmit: function(e) {
-      console.log(e);
+      this.params.name = this.name;
+      console.log(this.params.name);
+      window.location.href = '#panel';
     }
   }
 }

@@ -1,1 +1,16 @@
-<p>This is panel view</p>
+<div class="roomList">
+  <p>owner rooms</p>
+  <ul>
+    <li v-repeat="ownerRooms">
+      <a href="#chat/{{$value}}">{{$index}} - {{$value}}</a>
+    </li>
+  </ul>
+</div>
+<div class="roomList">
+  <p>other rooms</p>
+  <ul>
+    <li v-repeat="otherRooms">
+      <a href="#chat/{{$value}}">{{$index}} - {{$value}}</a>
+    </li>
+  </ul>
+</div>
