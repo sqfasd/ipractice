@@ -15,8 +15,12 @@ module.exports = {
       ]
     }
   },
+  attached: function() {
+    require('../../lib/verto').call(this.params.roomId);
+  },
   methods: {
     onSend: function(e) {
+      console.log(this.params.roomId);
       this.textMessages.push({
         id: 3,
         from: 'self',

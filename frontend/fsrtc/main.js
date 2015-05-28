@@ -17,6 +17,7 @@ router.on('/panel', function () {
 router.on('/chat/:id', function (id) {
   window.scrollTo(0, 0);
   app.currentView = 'chat';
+  app.params.roomId = id;
   console.log(id);
 });
 

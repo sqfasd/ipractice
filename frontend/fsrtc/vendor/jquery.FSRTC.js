@@ -89,6 +89,7 @@
         onOfferSDP: function() {}
       },
     }, options);
+    console.log('FSRTC options', options);
 
     this.enabled = true;
 
@@ -557,7 +558,6 @@
     console.log("Video constraints", mediaParams.video);
 
 
-    /*
     getUserMedia({
       constraints: {
         audio: mediaParams.audio,
@@ -567,7 +567,7 @@
       onsuccess: onSuccess,
       onerror: onError
     });
-    */
+    /*
     console.log('webkitGetUserMedia ==================');
     navigator.webkitGetUserMedia({
       audio: false,
@@ -575,12 +575,12 @@
         mandatory: {
           chromeMediaSource: 'screen',
           maxWidth: 1280,
-          maxHeight: 720 
+          maxHeight: 720
         },
         optional: []
       }
     }, onSuccess, onError);
-
+    */
 
 
     /*
@@ -960,9 +960,9 @@
       //}
 
       if (options.localVideo) {
-        options.localVideo[moz ? 'mozSrcObject' : 'src'] = moz ? stream : window.webkitURL.createObjectURL(stream);
+        options.localVideo[moz ? 'mozSrcObject' : 'src'] = moz ? stream : window.URL.createObjectURL(stream);
         options.localVideo.style.display = 'block';
-        self.options.localVideo.play();
+        options.localVideo.play();
       }
 
       if (options.onsuccess) {

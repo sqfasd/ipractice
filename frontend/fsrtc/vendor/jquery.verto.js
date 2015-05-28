@@ -1514,6 +1514,7 @@
       login: verto.options.login,
       videoParams: verto.options.videoParams
     }, params);
+    console.log('dialog.params', dialog.params);
 
     dialog.verto = verto;
     dialog.direction = direction;
@@ -1532,16 +1533,20 @@
       dialog.callID = dialog.params.callID = generateGUID();
     }
 
+    console.log('dialog.params.tag', dialog.params.tag);
     if (dialog.params.tag) {
       dialog.audioStream = document.getElementById(dialog.params.tag);
+      console.log('dialog.audioStream', dialog.audioStream);
 
       if (dialog.params.useVideo) {
         dialog.videoStream = dialog.audioStream;
       }
     } //else conjure one TBD
 
+    console.log('dialog.params.localTag', dialog.params.localTag);
     if (dialog.params.localTag) {
       dialog.localVideo = document.getElementById(dialog.params.localTag);
+      console.log('dialog.localVideo', dialog.localVideo);
     }
 
     dialog.verto.dialogs[dialog.callID] = dialog;
@@ -1615,6 +1620,7 @@
       });
     };
 
+    console.log('before new FSRTC dialog', dialog);
     dialog.rtc = new $.FSRTC({
       callbacks: RTCcallbacks,
       localVideo: dialog.localVideo,

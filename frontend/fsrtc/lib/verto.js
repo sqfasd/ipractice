@@ -8,8 +8,8 @@ var gOptions = {
   host: host,
   wssUrl: wssUrl,
   useStun: true,
-  localVideoTag: '',
-  videoTag: '',
+  localVideoTag: 'localVideo',
+  videoTag: 'remoteVideo',
   videoParams: {
     minWidth: 320,
     minHeight: 240,
@@ -67,6 +67,7 @@ module.exports = {
           videoParams: gOptions.videoParams,
           iceServers: gOptions.useStun,
         }, defaultCallbacks);
+        gInited = true;
         gVerto.login();
       });
     } else {
@@ -74,17 +75,18 @@ module.exports = {
     }
   },
 
-  call: function() {
-    console.log('verto.newCall options', options);
-    cur_call = verto.newCall($.extend({
-      destination_number: '',
+  call: function(id) {
+    var options = {
+      destination_number: id,
       caller_id_name: user.name,
       caller_id_number: user.id,
       useVideo: true,
       useStereo: true,
       useCamera: $.verto.videoDevices.length > 0 ? $.verto.videoDevices[0] : '',
       useMic: $.verto.audioDevices.length > 0 ? $.verto.audioDevices[0] : ''
-    }, options));
+    };
+    console.log('verto.call', options);
+    gCurrentCall = gVerto.newCall(options);
   },
 
   videoDevices: function() {
@@ -93,25 +95,4 @@ module.exports = {
   audioDevices: function() {
     return $.verto.audioDevices;
   },
-}
-
-function call_() {
-  navigator.webkitGetUserMedia({
-      audio: false,
-      video: {
-        mandatory: {
-          chromeMediaSource: 'screen',
-          maxWidth: 1280,
-          maxHeight: 720
-        },
-        optional: []
-      }
-    },
-    function(stream) {
-      document.getElementById('localVideo').src = URL.createObjectURL(stream);
-    },
-    function(e) {
-      console.log('could not connect stream', e);
-    }
-  );
 }
