@@ -20,5 +20,6 @@
     "firebase": "^2.2.4",
     "html-loader": "^0.3.0",
     "vue": "^0.11.10"
-  }
+  },
+  "chromium-args" : "--ignore-certificate-errors"
 }

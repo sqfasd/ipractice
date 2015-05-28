@@ -1,19 +1,86 @@
-<div id="videoBox">
-  <video id="remoteVideo" autopaly></video>
-  <video id="localVideo" autopaly></video>
-</div>
-<div id="msgPanel">
-  <ul style="list-style-type:none">
-    <li v-repeat="textMessages">
-    <span>{{from}}:</span>
-    <br/>
-    {{body}}
-    <br/>
-    </li>
-  </ul>
-</div>
-<div id="sendButton">
-  <button v-on="click: onSend">send</button>
-</div>
-<div id="memberList">
+<div class="row clearfix">
+  <div class="col-md-2 column">
+    <div class="panel-group" id="panel-168739">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-168739"
+          href="#panel-element-495667">Collapsible Group Item #1</a>
+        </div>
+        <div id="panel-element-495667" class="panel-collapse collapse">
+          <div class="panel-body">
+            Anim pariatur cliche...
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-168739"
+          href="#panel-element-913491">Collapsible Group Item #2</a>
+        </div>
+        <div id="panel-element-913491" class="panel-collapse collapse">
+          <div class="panel-body">
+            Anim pariatur cliche...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 column">
+    <div class="row clearfix">
+      <div class="col-md-6 column">
+        <video id="remoteVideo" autopaly></video>
+      </div>
+      <div class="col-md-6 column">
+        <video id="localVideo" autopaly></video>
+      </div>
+    </div>
+    <div class="row clearfix">
+      <div class="col-md-12 column">
+        <ul style="list-style-type:none">
+          <li v-repeat="textMessages">
+            <span>{{from}}:</span>
+            <br/>{{body}}
+            <br/>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+    <div class="row clearfix">
+      <div class="col-md-8 column">
+        <textarea id="sendMsg"></textarea>
+      </div>
+      <div class="col-md-4 column">
+        <button id="sendBtn" v-on="click: onSend">send</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 column">
+    <ul>
+      <li>
+        Lorem ipsum dolor sit amet
+      </li>
+      <li>
+        Consectetur adipiscing elit
+      </li>
+      <li>
+        Integer molestie lorem at massa
+      </li>
+      <li>
+        Facilisis in pretium nisl aliquet
+      </li>
+      <li>
+        Nulla volutpat aliquam velit
+      </li>
+      <li>
+        Faucibus porta lacus fringilla vel
+      </li>
+      <li>
+        Aenean sit amet erat nunc
+      </li>
+      <li>
+        Eget porttitor lorem
+      </li>
+    </ul>
+  </div>
 </div>

@@ -100,7 +100,7 @@
         return verto.handleMessage(e.eventData);
       },
       onWSConnect: function(o) {
-        o.call('login', {});
+        // o.call('login', {});
       },
       onWSLogin: function(success) {
         if (verto.callbacks.onWSLogin) {
@@ -119,7 +119,7 @@
       verto.ringer = $("#" + verto.options.tag);
     }
 
-    verto.rpcClient.call('login', {});
+    // verto.rpcClient.call('login', {});
 
   };
 
