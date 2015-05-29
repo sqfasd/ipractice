@@ -1,60 +1,89 @@
-<div class="row clearfix">
-  <div class="col-md-8 column">
-    <div class="row clearfix">
-      <div class="col-md-6 column">
-        <video width="320" height="240" id="remoteVideo" autopaly></video>
-      </div>
-      <div class="col-md-6 column">
-        <video width="320" height="240" id="localVideo" autopaly></video>
-      </div>
-    </div>
-    <div class="row clearfix">
-      <div class="col-md-12 column">
-        <ul style="list-style-type:none">
-          <li v-repeat="textMessages">
-            <span>{{from}}:</span>
-            <br/>{{body}}
-            <br/>
-          </li>
-        </ul>
+<style type="text/css">
+  .leftPanel {
+    width: 640px;
+    float: left;
+  }
+  .rightPanel {
+    width: 220px;
+    height: 680px;
+    background-color: gray;
+    float: left;
+    overflow-y: scroll;
+    scrolling: auto;
+    text-align: left;
+    border-style: inset;
+    font-size: 10pt;
+    resize: both;
+  }
+  #remoteVideo {
+    width: 320px;
+    height: 240px;
+  }
+  #localVideo {
+    width: 320px;
+    height: 240px;
+  }
+  #msgBox {
+    background-color: #eeeeee;
+    width: 500px;
+    height: 150px;
+    overflow-y: scroll;
+    scrolling: auto;
+    text-align: left;
+    border-style: inset;
+    font-size: 10pt;
+    color: #3333ff;
+    resize: both;
+  }
+  .msgFrom {
+    color: red;
+  }
+  .msgBody {
+    color: green;
+  }
+  .statusLight {
+    display: inline-block;
+    background: green;
+    border-radius: 50%;
+    height: 6px;
+    width: 6px;
+    margin-top: 2px;
+    margin-left: 2px;
+  }
+  .statusPlaceHolder {
+    display: inline-block;
+    background: none;
+    border-radius: 50%;
+    height: 6px;
+    width: 6px;
+    margin-top: 2px;
+    margin-left: 2px;
+  }
+  .memberName {
+    margin-left: 8px;
+  }
+</style>
 
-      </div>
-    </div>
-    <div class="row clearfix">
-      <div class="col-md-8 column">
-        <textarea id="sendMsg"></textarea>
-      </div>
-      <div class="col-md-4 column">
-        <button id="sendBtn" v-on="click: onSend">send</button>
-      </div>
+<div class="leftPanel">
+  <div id="videoPanel">
+    <video id="remoteVideo" autopaly></video>
+    <video id="localVideo" autopaly></video>
+  </div>
+  <div id="msgBox">
+    <div v-repeat="msgList">
+      <span class="msgFrom">{{from}}:</span>
+      <span class="msgBody">{{body}}</span>
     </div>
   </div>
-  <div class="col-md-4 column">
-    <ul>
-      <li>
-        Lorem ipsum dolor sit amet
-      </li>
-      <li>
-        Consectetur adipiscing elit
-      </li>
-      <li>
-        Integer molestie lorem at massa
-      </li>
-      <li>
-        Facilisis in pretium nisl aliquet
-      </li>
-      <li>
-        Nulla volutpat aliquam velit
-      </li>
-      <li>
-        Faucibus porta lacus fringilla vel
-      </li>
-      <li>
-        Aenean sit amet erat nunc
-      </li>
-      <li>
-        Eget porttitor lorem
-      </li>
-    </ul>
+  <div>
+    <textarea id="inputMsg" v-model="inputMsg"></textarea>
+    <button id="sendBtn" v-on="click: send">send</button>
+  </div>
+</div>
+
+<div id="roomMembers" class="rightPanel">
+  <div v-repeat="roomMembers">
+    <span class="{{light ? 'statusLight' : 'statusPlaceHolder'}}"></span>
+    <span class="memberName">{{name}}</span>
   </div>
 </div>

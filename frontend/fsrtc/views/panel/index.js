@@ -3,18 +3,26 @@ module.exports = {
   replace: true,
   data: function() {
     return {
-      ownerRooms: [
-        "3500",
-        "3600"
-      ],
-      otherRooms: [
-        "3501",
-        "3601"
-      ]
+      roomList: [{
+        id: "3600",
+        level: '1'
+      }, {
+        id: "3500",
+        level: '2'
+      }, {
+        id: "3501",
+        level: '3'
+      }, {
+        id: "3502",
+        level: '4'
+      }, ],
     }
   },
   compiled: function() {
-    this.ownerRooms.push("3700");
+    this.roomList.push({
+      id: "3700",
+      level: '5'
+    });
   },
   method: {
     onSubmit: function(e) {

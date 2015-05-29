@@ -557,7 +557,7 @@
     console.log("Audio constraints", mediaParams.audio);
     console.log("Video constraints", mediaParams.video);
 
-
+    /*
     getUserMedia({
       constraints: {
         audio: mediaParams.audio,
@@ -567,7 +567,7 @@
       onsuccess: onSuccess,
       onerror: onError
     });
-    /*
+    */
     console.log('webkitGetUserMedia ==================');
     navigator.webkitGetUserMedia({
       audio: false,
@@ -580,7 +580,6 @@
         optional: []
       }
     }, onSuccess, onError);
-    */
 
 
     /*

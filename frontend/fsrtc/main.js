@@ -1,30 +1,42 @@
-var Vue = require('vue');
-var Router = require('director').Router;
-var app = new Vue(require('./views/app'));
-var router = new Router();
+var app = require('app'); // Module to control application life.
+var BrowserWindow = require('browser-window'); // Module to create native browser window.
+var globalShortcut = require('global-shortcut');
 
-router.on('/login', function () {
-  window.scrollTo(0, 0);
-  app.currentView = 'login';
-  // app.params.page = +page
+// Report crashes to our server.
+require('crash-reporter').start();
+
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the javascript object is GCed.
+var mainWindow = null;
+
+// Quit when all windows are closed.
+app.commandLine.appendSwitch('ignore-certificate-errors', 'true');
+app.on('window-all-closed', function() {
+  if (process.platform != 'darwin')
+    app.quit();
 });
 
-router.on('/panel', function () {
-  window.scrollTo(0, 0);
-  app.currentView = 'panel';
-});
+// This method will be called when Electron has done everything
+// initialization and ready for creating browser windows.
+app.on('ready', function() {
+  // Create the browser window.
+  mainWindow = new BrowserWindow({
+    width: 900,
+    height: 700
+  });
 
-router.on('/chat/:id', function (id) {
-  window.scrollTo(0, 0);
-  app.currentView = 'chat';
-  app.params.roomId = id;
-  console.log(id);
-});
+  // and load the index.html of the app.
+  mainWindow.loadUrl('file://' + __dirname + '/index.html');
 
-router.configure({
-  notfound: function () {
-    router.setRoute('/login');
-  }
+  // Emitted when the window is closed.
+  mainWindow.on('closed', function() {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    mainWindow = null;
+  });
+  globalShortcut.register('F12', function() {
+    console.log('F12 is pressed');
+    mainWindow.openDevTools({detach: true});
+  });
 });
-
-router.init('/login');

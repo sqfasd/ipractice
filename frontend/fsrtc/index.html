@@ -5,16 +5,18 @@
   <meta charset="utf-8">
   <title>FSRTC Demo</title>
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
-  <link href="bower_components/flat-ui/dist/css/vendor/bootstrap.min.css" rel="stylesheet">
-  <link href="bower_components/flat-ui/dist/css/flat-ui.css" rel="stylesheet">
-  <script src="bower_components/flat-ui/dist/js/vendor/jquery.min.js"></script>
-  <script src="bower_components/flat-ui/dist/js/vendor/video.js"></script>
-  <script src="bower_components/flat-ui/dist/js/flat-ui.min.js"></script>
-  <script src="vendor/jquery.json-2.4.min.js"></script>
-  <script src="vendor/jquery.cookie.js"></script>
-  <script src="vendor/jquery.FSRTC.js"></script>
-  <script src="vendor/jquery.jsonrpcclient.js"></script>
-  <script src="vendor/jquery.verto.js"></script>
+  <!--<script src="bower_components/flat-ui/dist/js/vendor/jquery.min.js"></script>-->
+  <script type="text/javascript">
+    // fix 'require' conflict of electron and webpack
+    window.requireEx = window.require;
+    window.$ = window.jQuery = require("./vendor/jquery-2.1.1.min.js");
+  </script>
+  <script src="./vendor/jquery.contextmenu.js"></script>
+  <script src="./vendor/jquery.json-2.4.min.js"></script>
+  <script src="./vendor/jquery.cookie.js"></script>
+  <script src="./vendor/jquery.FSRTC.js"></script>
+  <script src="./vendor/jquery.jsonrpcclient.js"></script>
+  <script src="./vendor/jquery.verto.js"></script>
 </head>
 
 <body>

@@ -1,16 +1,21 @@
+<style type="text/css">
+  .listTitle {
+    font-size: 16pt;
+    margin-right: 10px;
+  }
+  .roomItem {
+    list-style: none;
+  }
+</style>
 <div class="roomList">
-  <p>owner rooms</p>
+  <span class="listTitle">owner rooms</span>
+  <br/>
   <ul>
-    <li v-repeat="ownerRooms">
-      <a href="#chat/{{$value}}">{{$index}} - {{$value}}</a>
+    <li class="roomItem" v-repeat="roomList">
+      <a href="#chat/{{id}}">{{$index}} - {{id}}</a>
     </li>
   </ul>
 </div>
-<div class="roomList">
-  <p>other rooms</p>
-  <ul>
-    <li v-repeat="otherRooms">
-      <a href="#chat/{{$value}}">{{$index}} - {{$value}}</a>
-    </li>
-  </ul>
-</div>
+<a href="#create">Create</a><br/>
+<a href="#search">Search</a><br/>
+<a href="#setting">Setting</a><br/>

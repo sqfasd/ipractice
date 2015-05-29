@@ -1,31 +1,28 @@
+var remote = requireEx('remote');
 module.exports = {
   template: require('./template.html'),
   replace: true,
   data: function() {
     return {
-      textMessages: [{
-        id: 1,
-        from: 'self',
-        body: 'message body'
-      },{
-        id: 2,
-        from: 'self',
-        body: 'message body 2'
-      }
-      ]
+      inputMsg: '',
+      msgList: [],
+      roomMembers: [],
     }
   },
   attached: function() {
-    require('../../lib/verto').call(this.params.roomId);
+    //require('../../lib/verto').call(this.params.roomId);
+    this.roomMembers.push({name: 'peili', light: true});
+    this.roomMembers.push({name: 'yanyi', light: true});
+    this.roomMembers.push({name: 'qingfeng', light: true});
+    this.roomMembers.push({name: 'guoli', light: false});
   },
   methods: {
-    onSend: function(e) {
+    send: function(e) {
       console.log(this.params.roomId);
-      this.textMessages.push({
-        id: 3,
-        from: 'self',
-        body: 'message body'
-      });
-    }
+      this.msgList.push({from: 'me', body: this.inputMsg});
+      $('#msgBox').animate({
+        "scrollTop": $('#msgBox')[0].scrollHeight
+      }, "fast");
+    },
   }
 }
