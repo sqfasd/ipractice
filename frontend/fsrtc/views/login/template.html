@@ -6,8 +6,11 @@
 </div>
 <label for="inputPassword">Password</label>
 <div>
-  <input type="password" id="inputPassword" v-model="passwd"
-  />
+  <input type="password" id="inputPassword" v-model="passwd" />
+</div>
+<label for="inputServerUrl">Server</label>
+<div>
+  <input type="text" id="inputServerHostName" v-model="serverHostName" />
 </div>
 <div>
   <button type="submit" v-on="click: onSubmit">Sign in</button>

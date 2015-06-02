@@ -1,11 +1,10 @@
-var user = require('./user');
+var config = require('./config');
 
-var host = '192.168.2.3';
-var wssUrl = 'wss://' + host + ':8082';
+var wssUrl = 'wss://' + config.serverHostName + ':8082';
 var useStun = true;
 
 var gOptions = {
-  host: host,
+  host: config.serverHostName,
   wssUrl: wssUrl,
   useStun: true,
   localVideoTag: 'localVideo',
@@ -59,8 +58,8 @@ module.exports = {
     if (!gInited) {
       $.verto.init({}, function() {
         gVerto = new $.verto({
-          login: user.id,
-          passwd: user.passwd,
+          login: config.id,
+          passwd: config.passwd,
           socketUrl: gOptions.wssUrl,
           tag: gOptions.videoTag,
           localTag: gOptions.localVideoTag,
@@ -78,8 +77,8 @@ module.exports = {
   call: function(id) {
     var options = {
       destination_number: id,
-      caller_id_name: user.name,
-      caller_id_number: user.id,
+      caller_id_name: config.name,
+      caller_id_number: config.id,
       useVideo: true,
       useStereo: true,
       useCamera: $.verto.videoDevices.length > 0 ? $.verto.videoDevices[0] : '',

@@ -1,4 +1,4 @@
-var user = require('../../lib/user');
+var config = require('../../lib/config');
 var verto = require('../../lib/verto');
 
 module.exports = {
@@ -7,16 +7,18 @@ module.exports = {
   data: function() {
     return {
       id: '',
-      passwd: ''
+      passwd: '',
+      serverHostName: config.serverHostName, 
     }
   },
   methods: {
     onSubmit: function(e) {
-      user.id = this.id;
-      user.name = 'test';
-      user.passwd = this.passwd;
-      verto.init({});
-      verto.login();
+      config.id = this.id;
+      config.name = this.id;
+      config.passwd = this.passwd;
+      config.serverHostName = this.serverHostName;
+      //verto.init({});
+      //verto.login();
       window.location.href = '#panel';
     }
   }

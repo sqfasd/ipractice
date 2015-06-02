@@ -1,3 +1,5 @@
+var verto = require('../../lib/verto');
+
 function initMenu() {
 }
 
@@ -13,7 +15,7 @@ module.exports = {
     }
   },
   attached: function() {
-    //require('../../lib/verto').call(this.params.roomId);
+    // verto.call(this.params.roomId);
     this.roomMembers.push({
       name: 'peili',
       light: true

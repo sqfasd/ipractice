@@ -16,6 +16,8 @@ module.exports = {
         id: "3502",
         level: '4'
       }, ],
+    
+      callNumber: '',
     }
   },
   compiled: function() {
@@ -24,9 +26,9 @@ module.exports = {
       level: '5'
     });
   },
-  method: {
-    onSubmit: function(e) {
-      console.log(e);
+  methods: {
+    call: function(e) {
+      window.location.href = '#/chat/' + this.callNumber;
     }
   }
 }
