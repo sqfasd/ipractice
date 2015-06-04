@@ -15,7 +15,7 @@ module.exports = {
     }
   },
   attached: function() {
-    // verto.call(this.params.roomId);
+    verto.call(this.params.roomId);
     this.roomMembers.push({
       name: 'peili',
       light: true

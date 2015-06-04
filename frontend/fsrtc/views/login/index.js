@@ -17,8 +17,8 @@ module.exports = {
       config.name = this.id;
       config.passwd = this.passwd;
       config.serverHostName = this.serverHostName;
-      //verto.init({});
-      //verto.login();
+      verto.init({});
+      verto.login();
       window.location.href = '#panel';
     }
   }

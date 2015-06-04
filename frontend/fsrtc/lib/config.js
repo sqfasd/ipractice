@@ -1,7 +1,7 @@
 var id = '';
 var name = '';
 var passwd = '';
-var serverHostName = '192.168.2.3';
+var serverHostName = '112.126.76.9';
 
 module.exports = {
   id: id,

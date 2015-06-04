@@ -574,8 +574,8 @@
       video: {
         mandatory: {
           chromeMediaSource: 'screen',
-          maxWidth: 1280,
-          maxHeight: 720
+          maxWidth: 1920,
+          maxHeight: 1080
         },
         optional: []
       }
