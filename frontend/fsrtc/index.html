@@ -22,6 +22,44 @@
 <body>
   <div id="app"></div>
   <script src="build/bundle.js"></script>
+  <button id="share">screen test</button>
+  <video id="screenShare" autoplay></video>
+  <script type="text/javascript">
+    var gui = require('nw.gui');
+    gui.Screen.Init(); // you only need to call this once
+    $('#share').click(function() {
+        console.log('clicked');
+gui.Screen.chooseDesktopMedia(["window","screen"], function(streamId) {
+  var constraints = {
+    audio: false,
+    video: {
+      mandatory: {
+        chromeMediaSource: 'desktop',
+        chromeMediaSourceId: streamId,
+        maxWidth: 1920,
+        maxHeight: 1080
+      },
+      optional:[{
+        googTemporalLayeredScreencast: true
+      }]
+    }
+  }
+
+  function gotStream(s) {
+    console.log(s);
+    $('#screenShare')[0].display = 'block';
+    $('#screenShare')[0].src = URL.createObjectURL(s);
+    $('#screenShare')[0].play();
+  }
+
+  function gotError(e) {
+    console.log(e);
+  }
+
+  window.navigator.webkitGetUserMedia(constraints, gotStream, gotError)
+    });
+})
+  </script>
 </body>
 
 </html>

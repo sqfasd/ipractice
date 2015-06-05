@@ -2,7 +2,7 @@
   "name": "fsrtc",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack --module-bind \"vue=vue\" --watch --devtool source-map",
@@ -21,5 +21,5 @@
     "html-loader": "^0.3.0",
     "vue": "^0.11.10"
   },
-  "chromium-args" : "--ignore-certificate-errors"
+  "chromium-args" : "--ignore-certificate-errors --enable-usermedia-screen-capturing"
 }

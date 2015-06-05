@@ -577,7 +577,9 @@
           maxWidth: 1920,
           maxHeight: 1080
         },
-        optional: []
+        optional: [{
+          googTemporalLayeredScreencast: true
+        }]
       }
     }, onSuccess, onError);
 

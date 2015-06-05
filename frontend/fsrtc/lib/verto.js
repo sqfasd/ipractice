@@ -1,24 +1,27 @@
 var config = require('./config');
 
-var wssUrl = 'wss://' + config.serverHostName + ':8082';
 var useStun = true;
 
-var gOptions = {
-  host: config.serverHostName,
-  wssUrl: wssUrl,
-  useStun: true,
-  localVideoTag: 'localVideo',
-  videoTag: 'remoteVideo',
-  videoParams: {
-    minWidth: 320,
-    minHeight: 240,
-    maxWidth: 1920,
-    maxHeight: 1080,
-  }
-};
+var gOption = null;
 var gVerto = null;
 var gCurrentCall = null;
 var gInited = false;
+
+function getGlobalOption() {
+    return {
+      host: config.serverHostName,
+      wssUrl: 'wss://' + config.serverHostName + ':8082',
+      useStun: true,
+      localVideoTag: 'localVideo',
+      videoTag: 'remoteVideo',
+      videoParams: {
+        minWidth: 320,
+        minHeight: 240,
+        maxWidth: 1920,
+        maxHeight: 1080,
+      }
+    };
+}
 
 var defaultCallbacks = {
   onMessage: function(verto, dialog, msg, data) {
@@ -50,7 +53,7 @@ var defaultCallbacks = {
 
 module.exports = {
   init: function(options) {
-    gOptions = $.extend(gOptions, options);
+    gOptions = $.extend(getGlobalOption(), options);
     console.log('verto init options', gOptions);
   },
 

@@ -3,7 +3,7 @@ var verto = require('../../lib/verto');
 function initMenu() {
 }
 
-var remote = requireEx('remote');
+// var remote = requireEx('remote');
 module.exports = {
   template: require('./template.html'),
   replace: true,
