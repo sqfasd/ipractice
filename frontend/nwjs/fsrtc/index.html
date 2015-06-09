@@ -1,0 +1,101 @@
+<html>
+
+<head>
+  <title>Conference Demo</title>
+  <style type="text/css">
+    button {
+      position: absolute;
+      left: 40%;
+      width: 100;
+      height: 50;
+    }
+  </style>
+
+  <script src="./vendor/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript">
+    var gui = require('nw.gui');
+
+    function openPrepareWindow() {
+      gui.Window.open(
+        'prepare.html',
+        {
+          width: 500,
+          height: 300,
+          focus: true
+        }
+      );
+      gui.Window.get().close();
+    }
+    function initMediaDevice() {
+      if (process.setting.init) {
+        return;
+      }
+      MediaStreamTrack.getSources(function(media_sources) {
+        process.setting.init = true;
+        var setting = process.setting;
+        for (var i = 0; i < media_sources.length; i++) {
+          if (media_sources[i].kind == 'video') {
+            var device = media_sources[i];
+            setting.cameraOptions.push({text: device.label, value: device.id});
+          } else {
+            var device = media_sources[i];
+            setting.micOptions.push({text: device.label, value: device.id});
+          }
+        }
+        if (setting.cameraOptions.length == 0) {
+          setting.cameraOptions.push({text: 'No Camera', value: ''});
+        }
+        if (setting.micOptions.length == 0) {
+          setting.micOptions.push({text: 'No Mic', value: ''});
+        }
+        setting.selectCamera = setting.cameraOptions[0].value;
+        setting.selectMic = setting.micOptions[0].value;
+      });
+    }
+
+    window.onload = function() {
+      initMediaDevice();
+      $('#settingButton').click(function() {
+        gui.Window.open(
+          'setting.html',
+          {
+            width: 600,
+            height: 600,
+            focus: true
+          }
+        );
+      });
+      $('#organizeButton').click(function() {
+        process.user.isModerator = true;
+        process.askForAnonymousAccount({isModerator: true}, function(err) {
+          if (err) {
+            alert(err);
+            return;
+          }
+          openPrepareWindow();
+        });
+      });
+      $('#joinButton').click(function() {
+        process.user.isModerator = false;
+        openPrepareWindow();
+      });
+    }
+  </script>
+</head>
+
+<body>
+  <button id="settingButton">Setting</button>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <button id="organizeButton">Organize</button>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <button id="joinButton">Join</button>
+  <br/>
+</body>
+
+</html>

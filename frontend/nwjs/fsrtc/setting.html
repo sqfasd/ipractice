@@ -1,0 +1,76 @@
+<html>
+
+<head>
+  <title>Conference Demo</title>
+
+  <style type="text/css">
+    .localVideoPreview {
+      width: 400px;
+      height: 300px;
+    }
+  </style>
+
+  <script src="./vendor/jquery-2.1.1.min.js"></script>
+  <script src="./vendor/vue.js"></script>
+  <script type="text/javascript">
+    window.onload = function() {
+      var setting = process.setting;
+      new Vue({
+        el: '#setting',
+        data: {
+          selectCamera: setting.selectCamera,
+          selectMic: setting.selectMic,
+          cameraOptions: setting.cameraOptions,
+          micOptions: setting.micOptions
+        },
+        compiled: function() {
+          console.log(setting);
+        },
+        ready: function() {
+          navigator.webkitGetUserMedia(
+            {video: true},
+            function(stream) {
+              $('.localVideoPreview')[0].display = 'block';
+              $('.localVideoPreview')[0].src = URL.createObjectURL(stream);
+              $('.localVideoPreview')[0].play();
+            },
+            function(e) {
+              console.error('getUserMedia error', e);
+            }
+          );
+        },
+        watch: {
+          'selectCamera': function(val, oldVal) {
+             process.setting.selectCamera = val;
+          },
+          'selectMic': function(val, oldVal) {
+            console.log('selectMic changed', oldVal, val);
+            process.setting.selectMic = val;
+          }
+        },
+        methods: {
+          onTest: function() {
+            console.log(this.selectCamera);
+            console.log(this.selectMic);
+          }
+        }
+      });
+    }
+  </script>
+</head>
+
+<body>
+  <div id="setting">
+    <p>
+      <legend><b>Camera</b></legend>
+      <select v-model="selectCamera" options="cameraOptions"></select>
+    </p>
+    <video class="localVideoPreview" autoplay></video>
+    <p>
+      <legend><b>Mic</b></legend>
+      <select v-model="selectMic" options="micOptions"></select>
+    </p>
+  </div>
+</body>
+
+</html>

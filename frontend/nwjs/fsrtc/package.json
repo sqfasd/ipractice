@@ -1,0 +1,14 @@
+{
+  "name": "nwtest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "node-main": "main.js",
+  "chromium-args": "--enable-transparent-visuals --disable-gpu --ignore-certificate-errors --enable-usermedia-screen-capturing",
+  "window": {
+    "transparent": false,
+    "width": 500,
+    "height": 300,
+    "resizable": false
+  }
+}

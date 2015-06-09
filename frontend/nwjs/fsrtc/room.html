@@ -1,0 +1,48 @@
+<html>
+
+<head>
+  <title>Conference Demo</title>
+
+  <style type="text/css">
+    body {
+      background: gray;
+    }
+    #mosaicGridVideo {
+      width: 100%;
+      height: 90%;
+    }
+    .toolbar {
+      position: absolute;
+      bottom: 0px;
+      margin-left: 10px;
+      margin-bottom: 10px;
+    }
+    #sharedScreenVideo {
+      display: none;
+    }
+  </style>
+
+  <script src="./vendor/jquery-2.1.1.min.js"></script>
+  <script src="./vendor/jquery.json-2.4.min.js"></script>
+  <script src="./vendor/jquery.cookie.js"></script>
+  <script src="./vendor/jquery.FSRTC.js"></script>
+  <script src="./vendor/jquery.jsonrpcclient.js"></script>
+  <script src="./vendor/jquery.verto.js"></script>
+  <script src="./vendor/vue.js"></script>
+  <script src="./room.js"></script>
+</head>
+
+<body>
+  <div id="room">
+    <p>{{statusText}}</p>
+    <video id="mosaicGridVideo"></video>
+    <div class="toolbar">
+      <button v-on="click: shareScreen()">share</button>
+      <button>members</button>
+      <button>invite</button>
+      <button>chat</button>
+    </div>
+    <video id="sharedScreenVideo"></video>
+  </div>
+</body>
+</html>

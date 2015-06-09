@@ -1,0 +1,67 @@
+<html>
+
+<head>
+  <title>Conference Demo</title>
+
+  <style type="text/css">
+  </style>
+
+  <script src="./vendor/jquery-2.1.1.min.js"></script>
+  <script src="./vendor/vue.js"></script>
+  <script type="text/javascript">
+    var gui = require('nw.gui');
+    window.onload = function() {
+      new Vue({
+        el: '#prepare',
+        data: {
+          isModerator: process.user.isModerator,
+          roomId: process.user.normalizedRoomId,
+          displayName: process.user.display,
+          joinRoomId: '',
+        },
+        compiled: function() {
+        },
+        ready: function() {
+        },
+        methods: {
+          startConference: function() {
+            function openRoomWindow() {
+              gui.Window.open('room.html', {focus: true}).maximize();
+              gui.Window.get().close();
+            }
+            process.user.displayName = this.displayName;
+            if (!this.isModerator) {
+              process.askForAnonymousAccount({joinRoomId: this.joinRoomId},
+                function(err) {
+                  if (err) {
+                    alert(err);
+                    return;
+                  }
+                  openRoomWindow();
+                });
+            } else {
+              openRoomWindow();
+            }
+          },
+        }
+      });
+    }
+  </script>
+</head>
+
+<body>
+  <div id="prepare">
+    <template v-if="isModerator">
+      <p>Your room id is: <strong>{{roomId}}</strong></p>
+    </template>
+    <template v-if="!isModerator">
+      <p>Input room id:</p>
+      <input type="text" v-model="joinRoomId"/>
+    </template>
+    <p>Input display name:</p>
+    <input type="text" v-model="displayName" />
+    <button v-on="click: startConference()">Start</button>
+  </div>
+</body>
+
+</html>
