@@ -13,7 +13,8 @@ process.user = {
   username: '',
   password: '',
   normalizedRoomId: '',
-  callerId: '',
+  fsUserID: '',
+  fsPassword: '',
   fsNormalConferenceId: '',
   fsScreenConferenceId: '',
   isModerator: false,
@@ -68,10 +69,11 @@ process.askForAnonymousAccount = function(option, callback) {
   process.user.password = '1234';
   process.user.normalizedRoomId = '000-123-4567';
   if (process.user.isModerator) {
-    process.user.callerId = '1019';
+    process.user.fsUserID = '1019';
   } else {
-    process.user.callerId = '1008';
+    process.user.fsUserID = '1008';
   }
+  process.user.fsPassword = '1234';
   process.user.fsNormalConferenceId = '3600';
   process.user.fsScreenConferenceId = '3600-screen';
   callback(null);

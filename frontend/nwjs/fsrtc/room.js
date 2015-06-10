@@ -24,7 +24,7 @@ function addChatMessage(data) {
 
 function RoomManager(laData, callID, verto) {
   this.subscribeId = null;
-  this.laData = laData;  // live-array data
+  this.laData = laData; // live-array data
   this.callID = callID;
   this.verto = verto;
   this._init();
@@ -99,7 +99,8 @@ RoomManager.prototype.destroy = function() {
 }
 
 var gVerto = null;
-var gCurrentCall = null;
+var gNormalCall = null;
+var gScreenCall = null;
 var gView = null;
 var gRoomManager = null;
 var vertoCallbacks = {
@@ -120,9 +121,9 @@ var vertoCallbacks = {
                 gRoomManager.destroy();
               }
               gRoomManager = new RoomManager(
-                  data.pvtData,
-                  dialog ? dialog.callID : null,
-                  verto);
+                data.pvtData,
+                dialog ? dialog.callID : null,
+                verto);
               break;
           }
         }
@@ -138,14 +139,11 @@ var vertoCallbacks = {
   },
   onDialogState: function(d) {
     console.log('onDialogState', d);
-    if (!gCurrentCall) {
-      gCurrentCall = d;
-    }
     // TODO(qingfeng) process share call and private call
     switch (d.state) {
       case $.verto.enum.state.early:
       case $.verto.enum.state.active:
-        gView.status= 'connected';
+        gView.status = 'connected';
         break;
       case $.verto.enum.state.destroy:
         break;
@@ -161,15 +159,14 @@ var vertoCallbacks = {
     var options = {
       destination_number: process.user.fsNormalConferenceId,
       caller_id_name: process.user.displayName,
-      caller_id_number: process.user.callerId,
+      caller_id_number: process.user.fsUserID,
       useVideo: true,
       useStereo: true,
       useCamera: process.setting.selectCamera,
       useMic: process.setting.selectMic,
     };
-    if (!process.setting.selectCamera || !process.setting.selectMic) {}
     console.log('newCall options', options);
-    gVerto.newCall(options);
+    gNormalCall = gVerto.newCall(options);
   },
   onWSClose: function(v, success) {
     console.log('onWSClose', success);
@@ -187,6 +184,7 @@ function hangupVerto() {
 }
 
 window.onload = function() {
+  gui.Screen.Init();
   gView = new Vue({
     el: '#room',
     data: {
@@ -196,8 +194,8 @@ window.onload = function() {
     ready: function() {
       $.verto.init({}, function() {
         gVerto = new $.verto({
-          login: process.user.callerId,
-          passwd: process.user.password,
+          login: process.user.fsUserID,
+          passwd: process.user.fsPassword,
           socketUrl: getVertoWssUrl(),
           tag: 'mosaicGridVideo',
           videoParams: getVideoParams(),
@@ -225,13 +223,46 @@ window.onload = function() {
             this.hide();
           });
         }
+      },
+      shareScreen: function() {
+        console.log('shareScreen enter');
+        // TODO(qingfeng) nw.js issue, don't call back if it's not called in the
+        // first window
+        //gui.Screen.chooseDesktopMedia(["window", "screen"], function(streamId) {
+          var streamId = 'screen:0';
+          console.log('after chooseDesktopMedia', streamId);
+          var options = {
+            destination_number: process.user.fsScreenConferenceId,
+            caller_id_name: process.user.displayName,
+            caller_id_number: process.user.fsUserID,
+            screenShare: true,
+            useVideo: true,
+            useStereo: false,
+            tag: 'sharedScreenVideo',
+            videoParams: {
+              mandatory: {
+                chromeMediaSource: 'desktop',
+                chromeMediaSourceId: streamId,
+                maxWidth: 1920,
+                maxHeight: 1080
+              },
+              optional: [{
+                googTemporalLayeredScreencast: true
+              }]
+            }
+          };
+          console.log('before share screen call', options);
+          var gScreenCall = gVerto.newCall(options);
+          showSharedScreen();
+        //});
       }
     }
   });
+
   process.on('chat.channelMessage', function(msg) {
     console.log('process event chat.channelMessage', msg);
-    if (!gCurrentCall) {
-      console.error('gCurrentCall is null, send message failed');
+    if (!gNormalCall) {
+      console.error('gNormalCall is null, send message failed');
       return;
     }
     if (!gRoomManager) {
@@ -239,7 +270,7 @@ window.onload = function() {
       return;
     }
 
-    gCurrentCall.message({
+    gNormalCall.message({
       to: gRoomManager.laData.chatID,
       body: msg,
     });
@@ -248,6 +279,8 @@ window.onload = function() {
 
 gui.Window.get().on('close', function() {
   hangupVerto();
-  process.chatWindow.close(true);
+  if (process.chatWindow) {
+    process.chatWindow.close(true);
+  }
   this.close(true);
 });

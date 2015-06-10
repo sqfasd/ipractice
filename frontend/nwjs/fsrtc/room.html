@@ -7,7 +7,7 @@
     body {
       background: gray;
     }
-    #mosaicGridVideo {
+    .mosaicGridVideo {
       width: 100%;
       height: 90%;
     }
@@ -17,8 +17,26 @@
       margin-left: 10px;
       margin-bottom: 10px;
     }
-    #sharedScreenVideo {
+    .sharedScreenVideo {
       display: none;
+    }
+
+    .mosaicGridVideoAfterShare {
+      width: 30%;
+      height: 30%;
+      float: left;
+    }
+    .toolbarAfterShare {
+      position: absolute;
+      left: 0px;
+      top: 30%;
+      width: 20px;
+      margin-top: 10px;
+      margin-left: 10px;
+    }
+    .sharedScreenVideoAfterShare {
+      display: block;
+      width: 70%;
     }
   </style>
 
@@ -30,20 +48,38 @@
   <script src="./vendor/jquery.verto.js"></script>
   <script src="./vendor/vue.js"></script>
   <script src="./room.js"></script>
+  <script>
+    function showSharedScreen() {
+      var mosaicGridVideo = $('.mosaicGridVideo');
+      var toolbar = $('.toolbar');
+      var sharedScreenVideo = $('.sharedScreenVideo');
+      mosaicGridVideo.attr('class', 'mosaicGridVideoAfterShare');
+      toolbar.attr('class', 'toolbarAfterShare');
+      sharedScreenVideo.attr('class', 'sharedScreenVideoAfterShare');
+    }
+    function showMosaicGridVideo() {
+      var mosaicGridVideo = $('.mosaicGridVideoAfterShare');
+      var toolbar = $('.toolbarAfterShare');
+      var sharedScreenVideo = $('.sharedScreenVideoAfterShare');
+      mosaicGridVideo.attr('class', 'mosaicGridVideo');
+      toolbar.attr('class', 'toolbar');
+      sharedScreenVideo.attr('class', 'sharedScreenVideo');
+    }
+  </script>
 </head>
 
 <body>
   <div id="room">
     <p>{{status}}</p>
-    <video id="mosaicGridVideo"></video>
-    <div class="toolbar" v-show="status === 'connected'">
+    <video id="mosaicGridVideo" class="mosaicGridVideo"></video>
+    <div id="toolbar" class="toolbar" v-show="status === 'connected'">
       <button v-on="click: shareScreen()">share</button>
       <button>members</button>
       <button>invite</button>
       <button v-on="click: openChat()">chat</button>
       <button v-on="click: hangup()">finish</button>
     </div>
-    <video id="sharedScreenVideo"></video>
+    <video id="sharedScreenVideo" class="sharedScreenVideo"></video>
   </div>
 </body>
 </html>

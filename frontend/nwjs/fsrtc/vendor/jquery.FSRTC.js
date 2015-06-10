@@ -431,17 +431,11 @@
 
     var audio;
 
-    if (obj.options.videoParams && obj.options.screenShare) { //obj.options.videoParams.chromeMediaSource == 'desktop') {
-
-      //obj.options.videoParams = {
-      //	chromeMediaSource: 'screen',
-      //	maxWidth:screen.width,
-      //	maxHeight:screen.height
-      //	chromeMediaSourceId = sourceId;
-      //  };
-
-      console.error("SCREEN SHARE");
-      audio = false;
+    if (obj.options.videoParams && obj.options.screenShare) {
+      return {
+        audio: false,
+        video: obj.options.videoParams,
+      };
     } else {
       audio = {
         mandatory: obj.options.audioParams,
@@ -528,7 +522,13 @@
           return onICEComplete(self);
         },
         onRemoteStream: screen ? function(stream) {
-          console.error("SKIP");
+          var element = self.options.useVideo;
+          console.log("REMOTE STREAM", stream, element);
+          if (element) {
+            self.options.useVideo.style.display = 'block';
+            element.src = URL.createObjectURL(stream);
+            element.play();
+          }
         } : function(stream) {
           return onRemoteStream(self, stream);
         },
