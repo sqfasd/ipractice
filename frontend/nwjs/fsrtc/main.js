@@ -25,6 +25,41 @@ process.room = {
   chatMessages: [],
 }
 
+process.clearRoomMember = function() {
+  process.room.members = [];
+}
+
+// TODO(qingfeng) use hash table instead of array
+process.addRoomMember = function(key, data) {
+  process.room.members.push({
+    key: key,
+    seq: data[0],
+    id: data[1],
+    name: data[2],
+    codec: data[3],
+    status: data[4],
+  });
+}
+
+process.updateRoomMember = function(key, data) {
+  for (var i in process.room.members) {
+    var member = process.room.members[i];
+    if (member.key === key) {
+      member.status = data[4];
+      break;
+    }
+  }
+}
+
+process.removeRoomMember = function(key) {
+  for (var i in process.room.members) {
+    if (process.room.members[i].key === key) {
+      process.room.members.splice(i, 1);
+      break;
+    }
+  }
+}
+
 process.askForAnonymousAccount = function(option, callback) {
   if (option && option.joinRoomId) {
     process.user.normalizedRoomId = option.joinRoomId;

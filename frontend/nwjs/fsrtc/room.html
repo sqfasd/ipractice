@@ -34,13 +34,14 @@
 
 <body>
   <div id="room">
-    <p>{{statusText}}</p>
+    <p>{{status}}</p>
     <video id="mosaicGridVideo"></video>
-    <div class="toolbar">
+    <div class="toolbar" v-show="status === 'connected'">
       <button v-on="click: shareScreen()">share</button>
       <button>members</button>
       <button>invite</button>
-      <button>chat</button>
+      <button v-on="click: openChat()">chat</button>
+      <button v-on="click: hangup()">finish</button>
     </div>
     <video id="sharedScreenVideo"></video>
   </div>

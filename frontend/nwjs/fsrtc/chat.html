@@ -1,0 +1,116 @@
+<html>
+
+<head>
+  <title>Conference Demo</title>
+
+  <style type="text/css">
+    .leftPanel {
+      width: 65%;
+      float: left;
+    }
+    .rightPanel {
+      width: 25%;
+      height: 100%;
+      background-color: #F5F5DC;
+      float: left;
+      overflow-y: auto;
+      scrolling: auto;
+      text-align: left;
+      border-style: inset;
+      font-size: 10pt;
+    }
+    #msgBox {
+      background-color: #F8F8FF;
+      width: 100%;
+      height: 80%;
+      overflow-y: auto;
+      scrolling: auto;
+      text-align: left;
+      border-style: inset;
+      font-size: 10pt;
+      color: #3333ff;
+    }
+    #inputMsg {
+      width: 80%;
+      height: 20%;
+      resize: none;
+    }
+    #sendBtn {
+      width: 12%;
+      height: 20%;
+      position: absolute;
+      bottom: 0px;
+    }
+    .msgFrom {
+      color: red;
+    }
+    .msgBody {
+      color: green;
+    }
+    .statusLight {
+      display: inline-block;
+      background: green;
+      border-radius: 50%;
+      height: 6px;
+      width: 6px;
+      margin-top: 2px;
+      margin-left: 2px;
+    }
+    .statusPlaceHolder {
+      display: inline-block;
+      background: none;
+      border-radius: 50%;
+      height: 6px;
+      width: 6px;
+      margin-top: 2px;
+      margin-left: 2px;
+    }
+    .memberName {
+      margin-left: 8px;
+    }
+  </style>
+  <script src="./vendor/jquery-2.1.1.min.js"></script>
+  <script src="./vendor/vue.js"></script>
+  <script>
+    var gui = require('nw.gui');
+    window.onload = function() {
+      console.log('chatWindow onload');
+      new Vue({
+        el: '#chat',
+        data: {
+          chatMessages: process.room.chatMessages,
+          roomMembers: process.room.members,
+          inputMsg: '',
+        },
+        methods: {
+          sendMessage: function() {
+            process.emit('chat.channelMessage', this.inputMsg);
+            this.inputMsg = '';
+          }
+        }
+      });
+    }
+  </script>
+
+  <div id="chat">
+    <div class="leftPanel">
+      <div id="msgBox">
+        <div v-repeat="chatMessages">
+          <span class="msgFrom">{{from}}:</span>
+          <span class="msgBody">{{body}}</span>
+        </div>
+      </div>
+      <textarea id="inputMsg" v-model="inputMsg"></textarea>
+      <button id="sendBtn" v-on="click: sendMessage">send</button>
+    </div>
+
+    <div id="roomMembers" class="rightPanel">
+      <div v-repeat="roomMembers" class="memberItem">
+        <span class="{{light ? 'statusLight' : 'statusPlaceHolder'}}"></span>
+        <span class="memberName">{{name}}</span>
+      </div>
+    </div>
+    </body>
+  </div>
+
+</html>

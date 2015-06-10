@@ -15,88 +15,91 @@ function getVideoParams() {
   };
 }
 
-function addMember(memberData) {
-  process.members.push(memberData);
-}
-
 function addChatMessage(data) {
-  process.chatMessages.push({
+  process.room.chatMessages.push({
     from: data.from_msg_name || data.from,
     body: data.body,
   });
 }
 
-function RoomManager(ldData, callID, verto) {
+function RoomManager(laData, callID, verto) {
   this.subscribeId = null;
-  this.ldData = ldData;
+  this.laData = laData;  // live-array data
   this.callID = callID;
   this.verto = verto;
   this._init();
 }
 
 RoomManager.prototype._init = function() {
-  this.subscribeId = verto.subscribe(ldData.laChannel, {
-    handler: this._eventHandler,
+  var eventHandler = function(verto, e, self) {
+    var packet = e.data;
+    console.log('eventHandler packet', packet);
+    if (packet.name != self.laData.laName) {
+      console.warn('name not matched with this room');
+      return;
+    }
+    // TODO(qingfeng) process exception, while error occured, use bootstrap
+    switch (packet.action) {
+      case "init":
+        break;
+      case "bootObj":
+        process.clearRoomMember();
+        for (var i = 0; i < packet.data.length; ++i) {
+          var key = packet.data[i][0];
+          var data = packet.data[i][1];
+          process.addRoomMember(key, data);
+        }
+        break;
+      case "add":
+        process.addRoomMember(packet.hashKey, packet.data);
+        break;
+      case "modify":
+        process.updateRoomMember(packet.hashKey, packet.data);
+        break;
+      case "del":
+        process.removeRoomMember(packet.hashKey);
+        break;
+      case "clear":
+        process.clearRoomMember();
+        break;
+      case "reorder":
+        console.warn('receive reorder action');
+        break;
+      default:
+        console.warn('unexpected room event');
+        break;
+    }
+  }
+  this.subscribeId = this.verto.subscribe(this.laData.laChannel, {
+    handler: eventHandler,
     userData: this,
     subParams: {
-      callID: callID,
+      callID: this.callID,
     },
+  });
+  console.log('subscribeId', this.subscribeId);
+  this.sendCommand('bootstrap');
+}
+
+RoomManager.prototype.sendCommand = function(cmd, obj) {
+  var channel = this.laData.laChannel;
+  var name = this.laData.laName;
+  this.verto.broadcast(channel, {
+    liveArray: {
+      command: cmd,
+      context: channel,
+      name: name,
+      obj: obj
+    }
   });
 }
 
-RoomManager.prototype._eventHandler = function(v, e, la) {
-  console.log('_eventHandler', v, e, la);
-  var packet = e.data;
-  if (packet.name != la.name) {
-    return;
-  }
-  switch (packet.action) {
-    case "init":
-      la.init(packet.wireSerno, packet.data, packet.hashKey, packet.arrIndex);
-      break;
-    case "bootObj":
-      la.bootObj(packet.wireSerno, packet.data);
-      break;
-    case "add":
-      la.add(packet.wireSerno, packet.data, packet.hashKey, packet.arrIndex);
-      break;
-    case "modify":
-      if (!(packet.arrIndex || packet.hashKey)) {
-        console.error("Invalid Packet", packet);
-      } else {
-        la.modify(packet.wireSerno, packet.data, packet.hashKey, packet.arrIndex);
-      }
-      break;
-    case "del":
-      if (!(packet.arrIndex || packet.hashKey)) {
-        console.error("Invalid Packet", packet);
-      } else {
-        la.del(packet.wireSerno, packet.hashKey, packet.arrIndex);
-      }
-      break;
-    case "clear":
-      la.clear();
-      break;
-    case "reorder":
-      la.reorder(packet.wireSerno, packet.order);
-      break;
-    default:
-      if (la.checkSerno(packet.wireSerno)) {
-        if (la.onChange) {
-          la.onChange(la, {
-            serno: packet.wireSerno,
-            action: packet.action,
-            data: packet.data
-          });
-        }
-      }
-      break;
-  }
+RoomManager.prototype.destroy = function() {
+  this.verto.unsubscribe(this.subscribeId);
 }
 
-RoomManager.prototype.destroy = function() {}
-
 var gVerto = null;
+var gCurrentCall = null;
 var gView = null;
 var gRoomManager = null;
 var vertoCallbacks = {
@@ -104,8 +107,8 @@ var vertoCallbacks = {
     console.log('onMessage', msg, data);
     switch (msg) {
       case $.verto.enum.message.pvtEvent:
-        if (data.pvtEvent) {
-          switch (data.pvtEvent.action) {
+        if (data.pvtData) {
+          switch (data.pvtData.action) {
             case "conference-liveArray-part":
               if (gRoomManager) {
                 gRoomManager.destroy();
@@ -116,7 +119,10 @@ var vertoCallbacks = {
               if (gRoomManager) {
                 gRoomManager.destroy();
               }
-              gRoomManager = new RoomManager(data.pvtData, dialog.callID);
+              gRoomManager = new RoomManager(
+                  data.pvtData,
+                  dialog ? dialog.callID : null,
+                  verto);
               break;
           }
         }
@@ -132,11 +138,14 @@ var vertoCallbacks = {
   },
   onDialogState: function(d) {
     console.log('onDialogState', d);
+    if (!gCurrentCall) {
+      gCurrentCall = d;
+    }
     // TODO(qingfeng) process share call and private call
     switch (d.state) {
       case $.verto.enum.state.early:
       case $.verto.enum.state.active:
-        gView.statusText = 'connected';
+        gView.status= 'connected';
         break;
       case $.verto.enum.state.destroy:
         break;
@@ -170,11 +179,18 @@ var vertoCallbacks = {
   },
 };
 
+function hangupVerto() {
+  if (gVerto) {
+    gVerto.hangup();
+    gVerto = null;
+  }
+}
+
 window.onload = function() {
   gView = new Vue({
     el: '#room',
     data: {
-      statusText: 'connecting',
+      status: 'connecting',
     },
     compiled: function() {},
     ready: function() {
@@ -190,6 +206,48 @@ window.onload = function() {
         gVerto.login();
       });
     },
-    methods: {}
+    methods: {
+      hangup: function() {
+        hangupVerto();
+        gui.Window.get().close();
+      },
+      openChat: function() {
+        if (process.chatWindow) {
+          console.log('process.chatWindow show');
+          process.chatWindow.show();
+        } else {
+          process.chatWindow = gui.Window.open('chat.html', {
+            focus: true,
+            width: 900,
+            height: 700,
+          });
+          process.chatWindow.on('close', function() {
+            this.hide();
+          });
+        }
+      }
+    }
+  });
+  process.on('chat.channelMessage', function(msg) {
+    console.log('process event chat.channelMessage', msg);
+    if (!gCurrentCall) {
+      console.error('gCurrentCall is null, send message failed');
+      return;
+    }
+    if (!gRoomManager) {
+      console.log('gRoomManager is null, send message failed');
+      return;
+    }
+
+    gCurrentCall.message({
+      to: gRoomManager.laData.chatID,
+      body: msg,
+    });
   });
 }
+
+gui.Window.get().on('close', function() {
+  hangupVerto();
+  process.chatWindow.close(true);
+  this.close(true);
+});
