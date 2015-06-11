@@ -200,7 +200,7 @@ function acceptShareCall() {
     console.log('hangup current gScreenCall');
     gScreenCall.hangup();
   }
-  if (!gVertor) {
+  if (!gVerto) {
     console.error('gVerto is null');
     return;
   }
