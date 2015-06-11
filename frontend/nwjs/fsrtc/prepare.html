@@ -10,6 +10,12 @@
   <script src="./vendor/vue.js"></script>
   <script type="text/javascript">
     var gui = require('nw.gui');
+
+    function openRoomWindow() {
+      gui.Window.open('room.html', {focus: true}).maximize();
+      gui.Window.get().close();
+    }
+
     window.onload = function() {
       new Vue({
         el: '#prepare',
@@ -25,23 +31,11 @@
         },
         methods: {
           startConference: function() {
-            function openRoomWindow() {
-              gui.Window.open('room.html', {focus: true}).maximize();
-              gui.Window.get().close();
-            }
             process.user.displayName = this.displayName;
             if (!this.isModerator) {
-              process.askForAnonymousAccount({joinRoomId: this.joinRoomId},
-                function(err) {
-                  if (err) {
-                    alert(err);
-                    return;
-                  }
-                  openRoomWindow();
-                });
-            } else {
-              openRoomWindow();
+              process.setJoinRoomID(this.joinRoomId);
             }
+            openRoomWindow();
           },
         }
       });

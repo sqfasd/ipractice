@@ -103,6 +103,7 @@ var gNormalCall = null;
 var gScreenCall = null;
 var gView = null;
 var gRoomManager = null;
+var gIsShareScreenInitiator = false;
 var vertoCallbacks = {
   onMessage: function(verto, dialog, msg, data) {
     console.log('onMessage', msg, data);
@@ -129,6 +130,9 @@ var vertoCallbacks = {
         }
         break;
       case $.verto.enum.message.info:
+        if (data.body === '#SHARE_SCREEN' && !gIsShareScreenInitiator) {
+          acceptShareCall();
+        }
         addChatMessage(data);
         break;
       case $.verto.enum.message.display:
@@ -183,12 +187,42 @@ function hangupVerto() {
   }
 }
 
+function broadcastShareScreenEvent() {
+  gIsShareScreenInitiator = true;
+  gNormalCall.message({
+    to: gRoomManager.laData.chatID,
+    body: '#SHARE_SCREEN',
+  });
+}
+
+function acceptShareCall() {
+  if (gScreenCall) {
+    console.log('hangup current gScreenCall');
+    gScreenCall.hangup();
+  }
+  if (!gVertor) {
+    console.error('gVerto is null');
+    return;
+  }
+  var options = {
+    destination_number: process.user.fsScreenConferenceId,
+    caller_id_name: process.user.displayName,
+    caller_id_number: process.user.fsUserID,
+    useVideo: false,
+    useStereo: false,
+  };
+  console.log('newCall options', options);
+  gScreenCall = gVerto.newCall();
+  showSharedScreen();
+}
+
 window.onload = function() {
   gui.Screen.Init();
   gView = new Vue({
     el: '#room',
     data: {
       status: 'connecting',
+      roomID: process.user.normalizedRoomId,
     },
     compiled: function() {},
     ready: function() {
@@ -226,17 +260,14 @@ window.onload = function() {
       },
       shareScreen: function() {
         console.log('shareScreen enter');
-        // TODO(qingfeng) nw.js issue, don't call back if it's not called in the
-        // first window
-        //gui.Screen.chooseDesktopMedia(["window", "screen"], function(streamId) {
-          var streamId = 'screen:0';
+        gui.Screen.chooseDesktopMedia(["window", "screen"], function(streamId) {
           console.log('after chooseDesktopMedia', streamId);
           var options = {
             destination_number: process.user.fsScreenConferenceId,
             caller_id_name: process.user.displayName,
             caller_id_number: process.user.fsUserID,
             screenShare: true,
-            useVideo: true,
+            useVideo: false,
             useStereo: false,
             tag: 'sharedScreenVideo',
             videoParams: {
@@ -253,8 +284,11 @@ window.onload = function() {
           };
           console.log('before share screen call', options);
           var gScreenCall = gVerto.newCall(options);
-          showSharedScreen();
-        //});
+          broadcastShareScreenEvent();
+          // showSharedScreen();
+          gui.Window.get().unmaximize();
+          gui.Window.get().resizeTo(500, 500);
+        });
       }
     }
   });
@@ -283,4 +317,5 @@ gui.Window.get().on('close', function() {
     process.chatWindow.close(true);
   }
   this.close(true);
+  process.mainWindow.show();
 });

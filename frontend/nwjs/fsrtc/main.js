@@ -5,7 +5,7 @@ process.setting = {
   cameraOptions: [],
   micOptions: [],
   webApiHost: '192.168.3.4',
-  fsVertoHost: '192.168.2.3',
+  fsVertoHost: '192.168.3.4',
   useStun: true,
 }
 
@@ -61,20 +61,18 @@ process.removeRoomMember = function(key) {
   }
 }
 
-process.askForAnonymousAccount = function(option, callback) {
-  if (option && option.joinRoomId) {
-    process.user.normalizedRoomId = option.joinRoomId;
-  }
-  process.user.username = 'qingfeng';
-  process.user.password = '1234';
-  process.user.normalizedRoomId = '000-123-4567';
-  if (process.user.isModerator) {
-    process.user.fsUserID = '1019';
-  } else {
-    process.user.fsUserID = '1008';
-  }
-  process.user.fsPassword = '1234';
-  process.user.fsNormalConferenceId = '3600';
-  process.user.fsScreenConferenceId = '3600-screen';
-  callback(null);
+process.initAccountInfo = function(account) {
+  // process.user.username = 'qingfeng';
+  // process.user.password = '1234';
+  process.user.normalizedRoomId = account.room_id;
+  process.user.fsUserID = account.call_id;
+  process.user.fsPassword = account.pass;
+  process.user.fsNormalConferenceId = account.room_id + '-normal';
+  process.user.fsScreenConferenceId = account.room_id + '-screen';
+}
+
+process.setJoinRoomId = function(roomId) {
+  process.user.normalizedRoomId = roomId;
+  process.user.fsNormalConferenceId = roomId + '-normal';
+  process.user.fsScreenConferenceId = roomId + '-screen';
 }

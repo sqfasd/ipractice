@@ -24,8 +24,27 @@
           focus: true
         }
       );
-      gui.Window.get().close();
+      process.mainWindow = gui.Window.get();
+      process.mainWindow.hide();
     }
+
+    function prepareAnonymousAccount(isModerator) {
+      process.user.isModerator = isModerator;
+      var url = 'http://' +
+                process.setting.webApiHost +
+                ':9999/register?type=tmp';
+      $.get(url, function(result) {
+        console.log(result);
+        // TODO(qingfeng) handle error
+        try {
+          process.initAccountInfo(JSON.parse(result));
+          openPrepareWindow();
+        } catch (e) {
+          alert('parse register response failed', e);
+        }
+      });
+    }
+
     function initMediaDevice() {
       if (process.setting.init) {
         return;
@@ -66,18 +85,12 @@
         );
       });
       $('#organizeButton').click(function() {
-        process.user.isModerator = true;
-        process.askForAnonymousAccount({isModerator: true}, function(err) {
-          if (err) {
-            alert(err);
-            return;
-          }
-          openPrepareWindow();
-        });
+        var isModerator = true;
+        prepareAnonymousAccount(isModerator);
       });
       $('#joinButton').click(function() {
-        process.user.isModerator = false;
-        openPrepareWindow();
+        var isModerator = false;
+        prepareAnonymousAccount(isModerator);
       });
       $('#loginButton').click(function() {
       });

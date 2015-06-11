@@ -528,6 +528,8 @@
             self.options.useVideo.style.display = 'block';
             element.src = URL.createObjectURL(stream);
             element.play();
+          } else {
+            console.log('IGNORE STREAM');
           }
         } : function(stream) {
           return onRemoteStream(self, stream);

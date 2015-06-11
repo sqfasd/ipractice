@@ -30,9 +30,10 @@
           navigator.webkitGetUserMedia(
             {video: true},
             function(stream) {
-              $('.localVideoPreview')[0].display = 'block';
-              $('.localVideoPreview')[0].src = URL.createObjectURL(stream);
-              $('.localVideoPreview')[0].play();
+              var localVideoPreview = $('.localVideoPreview')[0];
+              localVideoPreview.display = 'block';
+              localVideoPreview.src = URL.createObjectURL(stream);
+              localVideoPreview.play();
             },
             function(e) {
               console.error('getUserMedia error', e);
