@@ -208,8 +208,9 @@ function acceptShareCall() {
     destination_number: process.user.fsScreenConferenceId,
     caller_id_name: process.user.displayName,
     caller_id_number: process.user.fsUserID,
-    useVideo: false,
+    useVideo: true,
     useStereo: false,
+    tag: 'sharedScreenVideo',
   };
   console.log('newCall options', options);
   gScreenCall = gVerto.newCall(options);
