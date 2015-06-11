@@ -212,7 +212,7 @@ function acceptShareCall() {
     useStereo: false,
   };
   console.log('newCall options', options);
-  gScreenCall = gVerto.newCall();
+  gScreenCall = gVerto.newCall(options);
   showSharedScreen();
 }
 
