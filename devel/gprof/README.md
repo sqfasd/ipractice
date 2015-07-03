@@ -8,6 +8,7 @@
 # multi-thread gprof usage
 
 ```bash
+make gprof-helper
  LD_PRELOAD=./gprof-helper.so your_program
 ```
 
