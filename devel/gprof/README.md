@@ -1,7 +1,6 @@
 # gprof basic usage
 
-1. add ```-pg`` to linker flags or
-   ```SET(CMAKE_EXE_LINKER_FLAGS -pg)``` in cmake
+1. add ```-pg``` to linker flags or ```SET(CMAKE_EXE_LINKER_FLAGS -pg)``` in cmake
 2. run the your_program
 3. gprof -b your_program [gmon.out]
 
@@ -9,7 +8,7 @@
 
 ```bash
 make gprof-helper
- LD_PRELOAD=./gprof-helper.so your_program
+LD_PRELOAD=./gprof-helper.so your_program
 ```
 
 # graphics view
