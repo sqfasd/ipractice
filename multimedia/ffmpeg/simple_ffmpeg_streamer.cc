@@ -1,8 +1,7 @@
 #include <stdio.h>
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 #include <libavformat/avformat.h>
 #include <libavutil/mathematics.h>
@@ -13,8 +12,8 @@ extern "C"
 
 int main(int argc, char* argv[]) {
   if (argc != 3) {
-    printf("usage: $ %s <input> <output>\n", argv[0]);
-    printf("example: $ %s test.mp4 rtmp://localhost/publishlive/livestream\n", argv[0]);
+    printf("usage: %s <input> <output>\n", argv[0]);
+    printf("example: %s test.mp4 rtmp://localhost/publishlive/livestream\n", argv[0]);
     return 0;
   }
   AVOutputFormat *ofmt = NULL;
@@ -52,7 +51,7 @@ int main(int argc, char* argv[]) {
   }
 
   for(i=0; i<ifmt_ctx->nb_streams; i++) {
-    if(ifmt_ctx->streams[i]->codec->codec_type==AVMEDIA_TYPE_VIDEO){
+    if (ifmt_ctx->streams[i]->codec->codec_type==AVMEDIA_TYPE_VIDEO) {
       videoindex=i;
       break;
     }
@@ -116,7 +115,7 @@ int main(int argc, char* argv[]) {
       break;
     //FIX：No PTS (Example: Raw H.264)
     //Simple Write PTS
-    if(pkt.pts==AV_NOPTS_VALUE){
+    if (pkt.pts==AV_NOPTS_VALUE) {
       //Write PTS
       AVRational time_base1=ifmt_ctx->streams[videoindex]->time_base;
       //Duration between 2 frames (us)
@@ -127,7 +126,7 @@ int main(int argc, char* argv[]) {
       pkt.duration=(double)calc_duration/(double)(av_q2d(time_base1)*AV_TIME_BASE);
     }
     //Important:Delay
-    if(pkt.stream_index==videoindex){
+    if (pkt.stream_index==videoindex) {
       AVRational time_base=ifmt_ctx->streams[videoindex]->time_base;
       AVRational time_base_q={1,AV_TIME_BASE};
       int64_t pts_time = av_rescale_q(pkt.dts, time_base, time_base_q);
@@ -146,7 +145,7 @@ int main(int argc, char* argv[]) {
     pkt.duration = av_rescale_q(pkt.duration, in_stream->time_base, out_stream->time_base);
     pkt.pos = -1;
     //Print to Screen
-    if(pkt.stream_index==videoindex){
+    if (pkt.stream_index==videoindex) {
       printf("Send %8d video frames to output URL\n",frame_index);
       frame_index++;
     }
