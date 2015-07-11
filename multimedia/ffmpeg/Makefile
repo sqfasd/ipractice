@@ -2,6 +2,8 @@ all: simple_ffmpeg_streamer
 
 simple_ffmpeg_streamer:
 	gcc simple_ffmpeg_streamer.cc -g \
+		-I /usr/local/include \
+		-L /usr/local/lib \
 		-o simple_ffmpeg_streamer.exe \
 		-lavformat \
 		-lavcodec \
@@ -9,4 +11,6 @@ simple_ffmpeg_streamer:
 		-lm \
 		-lpthread \
 		-lz \
-		-lswresample
+		-lswresample \
+		-lmp3lame \
+		-llzma

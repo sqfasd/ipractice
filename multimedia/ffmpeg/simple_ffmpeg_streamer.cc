@@ -51,6 +51,11 @@ int main(int argc, char* argv[]) {
   }
 
   for(i=0; i<ifmt_ctx->nb_streams; i++) {
+    char codec_buf[1024];
+    avcodec_string(codec_buf, sizeof(codec_buf), ifmt_ctx->streams[i]->codec, 0);
+    printf("--------------codec %d--------------\n", i);
+    printf("%s\n", codec_buf);
+    printf("--------------codec %d end--------------\n", i);
     if (ifmt_ctx->streams[i]->codec->codec_type==AVMEDIA_TYPE_VIDEO) {
       videoindex=i;
       break;
