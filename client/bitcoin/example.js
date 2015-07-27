@@ -21,14 +21,28 @@ client.getDifficulty(function(err, difficulty) {
 });
 
 //client.cmd('help', function(err, commandList) {
-//  assert.ifError(err);
-//  console.log('commandList', commandList);
+  //assert.ifError(err);
+  //console.log('commandList', commandList);
 //});
 
-client.walletPassphrase('shanqing1', 100, function(err) {
+//client.getNewAddress(function(err, result) {
+  //if (err) {
+    //return console.log(err);
+  //}
+  //console.log('getNewAddress', result);
+//});
+
+client.getAccount('iBXLPLNULq8KaXvxMTaTvYCJuLTSZH85Vr', function(err, result) {
   if (err) {
-    console.log('walletPassphrase error', err);
-    return;
+    return console.log(err);
   }
-  console.log('walletPassphrase success');
+  console.log('account', result);
 });
+
+//client.walletPassphrase('shanqing', 100, function(err) {
+  //if (err) {
+    //console.log('walletPassphrase error', err);
+    //return;
+  //}
+  //console.log('walletPassphrase success');
+//});
