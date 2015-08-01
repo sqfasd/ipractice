@@ -20,10 +20,10 @@ client.getDifficulty(function(err, difficulty) {
   console.log('difficulty: ', difficulty);
 });
 
-//client.cmd('help', function(err, commandList) {
-  //assert.ifError(err);
-  //console.log('commandList', commandList);
-//});
+client.cmd('help', function(err, commandList) {
+  assert.ifError(err);
+  console.log('commandList', commandList);
+});
 
 //client.getNewAddress(function(err, result) {
   //if (err) {
