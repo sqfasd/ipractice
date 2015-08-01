@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Test App Protocol</title>
+  </head>
+  <body>
+    <iframe src="http://localhost:3000/" scrolling="no" width="100%" height="600"></iframe>
+  </body>
+  <script>
+    var gui = require('nw.gui');
+    window.onload = function() {
+      console.log('parent window onload');
+      gui.Screen.Init();
+    }
+    window.addEventListener('message', function(e) {
+      console.log('parent window message', e);
+      if (e.data === 'requestScreenId') {
+        var iframe = document.querySelector('iframe');
+        gui.Screen.chooseDesktopMedia(['window', 'screen'], function(streamId) {
+          console.log('streamId', streamId);
+          iframe.contentWindow.postMessage({chooseStreamId: streamId}, '*');
+        });
+      }
+    }, false);
+  </script>
+</html>

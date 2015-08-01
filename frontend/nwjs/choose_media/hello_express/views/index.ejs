@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+  </head>
+  <body style="background: white">
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <a href="/users">user</a>
+    <button onclick="requestScreenId()">screen</button>
+    <video autoplay></video>
+  </body>
+  <script>
+    function requestScreenId() {
+      console.log('requestScreenId');
+      parent.postMessage('requestScreenId', "*");
+    }
+    function showVideo(sourceId) {
+      navigator.webkitGetUserMedia({
+        audio: false,
+        video: {
+          mandatory: {
+            chromeMediaSource: 'desktop',
+            chromeMediaSourceId: sourceId,
+            maxWidth: 1920,
+            maxHeight: 1080
+          },
+          optional: [{
+            googTemporalLayeredScreencast: true
+          }]
+        }
+        }, function(stream) {
+          console.log('stream', stream);
+          var video = document.querySelector('video');
+          video.src = URL.createObjectURL(stream);
+        }, function(error) {
+          console.log('error', error);
+      });
+    }
+    window.onload = function() {
+      console.log('window onload');
+    }
+    window.addEventListener('message', function(e) {
+      console.log('window message', e);
+      if (e.data.chooseStreamId) {
+        showVideo(e.data.chooseStreamId);
+      }
+    });
+  </script>
+</html>
