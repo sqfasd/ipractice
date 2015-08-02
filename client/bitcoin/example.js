@@ -3,9 +3,9 @@ var assert = require('assert');
 
 var client = new bitcoin.Client({
   host: 'localhost',
-  port: 9322,
-  user: 'infinitecoinrpc',
-  pass: 'Xp7GijrDdRW6sw5LSSiXnDsoE7fTHic9aLAGXYjJZJL',
+  port: 15715,
+  user: 'bcuser',
+  pass: 'bcpwd',
   timeout: 3000
 });
 
@@ -16,14 +16,14 @@ client.getBalance('*', 6, function(err, balance, resHeaders) {
 
 client.getDifficulty(function(err, difficulty) {
   assert.ifError(err);
-  assert.ok(typeof difficulty === 'number');
+  // assert.ok(typeof difficulty === 'number');
   console.log('difficulty: ', difficulty);
 });
 
-client.cmd('help', function(err, commandList) {
-  assert.ifError(err);
-  console.log('commandList', commandList);
-});
+// client.cmd('help', function(err, commandList) {
+//   assert.ifError(err);
+//   console.log('commandList', commandList);
+// });
 
 //client.getNewAddress(function(err, result) {
   //if (err) {
@@ -32,7 +32,7 @@ client.cmd('help', function(err, commandList) {
   //console.log('getNewAddress', result);
 //});
 
-client.getAccount('iBXLPLNULq8KaXvxMTaTvYCJuLTSZH85Vr', function(err, result) {
+client.getAccount('B8aX44P66dZGMYccWv7J6noHd5fTE6nagD', function(err, result) {
   if (err) {
     return console.log(err);
   }
