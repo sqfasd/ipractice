@@ -14,6 +14,7 @@
     function requestScreenId() {
       console.log('requestScreenId');
       parent.postMessage('requestScreenId', "*");
+      // showVideo('screen:0');
     }
     function showVideo(sourceId) {
       navigator.webkitGetUserMedia({

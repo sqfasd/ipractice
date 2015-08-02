@@ -1,10 +1,32 @@
 <!doctype html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Test App Protocol</title>
+    <style type="text/css">
+      * {
+        margin: 0;
+        padding: 0;
+        border: none;
+      }
+
+      html, body, iframe {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      body {
+        background-image: url('loading.gif');
+        background-size: 24px 19px;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center;
+      }
+    </style>
   </head>
   <body>
-    <iframe src="http://localhost:3000/" scrolling="no" width="100%" height="600"></iframe>
+    <iframe src="http://localhost:3000/" scrolling="no"></iframe>
   </body>
   <script>
     var gui = require('nw.gui');
