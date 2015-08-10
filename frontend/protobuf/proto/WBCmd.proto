@@ -1,0 +1,147 @@
+//protoc --plugin=/usr/local/bin/protoc-gen-objc *.proto --objc_out="./"
+//protoc --java_out=./com WBCmd.proto
+option optimize_for = SPEED;
+option java_outer_classname = "WBProtocol";
+option java_package = "com.xxb2.protobuf";
+
+
+message WBCmd {
+    enum Type {
+        Page=0;
+        Backgroud=1;
+        Style=2;
+        Stroke=3;
+        Playback=4;
+        Undo=5;
+        Clean=6;
+        Pen=7;
+        Text=8;
+        Image=9;
+        Header=10;
+    }
+    required Type type=1;
+    required int32 timestamp=2;
+    oneof cmd_oneof {
+      WBCmdPage page=4;
+      WBCmdBackground background=5;
+      WBCmdStyle style=6;
+      WBCmdStroke stroke=7;
+      WBCmdPen pen=8;
+      WBCmdText text=9;
+      WBCmdImage image=10;
+      WBCmdClean cleanup=11;
+      WBCmdPlayback playback=12;
+      WBCmdUndo undo=13;
+      WBCmdHeader header=14;
+    }
+}
+
+message WBCmdPage {
+    required int32 from=1;
+    required int32 to=2;
+}
+
+message WBCmdBackground {
+    required string name=1;
+}
+
+message WBCmdStyle {
+    required float width=1;
+    required int32 color=2;
+}
+
+message WBCmdPoint {
+    required float x = 1;
+    required float y = 2;
+    optional int32 timestamp = 3;
+}
+
+message WBCmdStroke {
+    repeated WBCmdPoint points =1;
+}
+
+message WBCmdPen {
+    enum Type {
+        InkPen=0;
+        Highlighter=1;
+        Eraser=2;
+    }
+    required Type type=1;
+}
+
+message WBCmdText {
+    required string text=1;
+    required float fontSize =2;
+    required string fontName =3;
+    required int32 textColor =4;
+    required float x=5;
+    required float y=6;
+    required float width=7;
+    required float height=8;
+    required string textImage=9;
+    required int32 tag=10;
+}
+
+message WBCmdImage {
+    required string name=1;
+    required float x=2;
+    required float y=3;
+    required float width=4;
+    required float height=5;
+    required int32 tag=7;
+    optional bytes data=8;
+}
+
+message WBCmdClean {
+    enum Type {
+        CleanDrawings =0;
+        CleanAll =1;
+    }
+    required Type type=1;
+}
+
+message WBCmdPlayback {
+    enum State {
+        Playing =0;
+        Paused =1;
+        Stoped =2;
+    }
+    required State type=1;
+}
+
+message WBCmdUndo {
+    enum Type {
+        Undo =0;
+        Redo =1;
+    }
+    required Type type=1;
+    optional int32 start=2;
+    optional int32 end=3;
+}
+
+message WBCmdHeader {
+    required string identifier =1;
+    required string versionString =2;
+    required int32 versionNumber =3;
+    required float boardWidth =4;
+    required float boardHeight =5;
+    required int32 pageCount =6;
+    optional string audioSrc =7;
+    optional string screenshotSrc=8;
+    optional int32  duration =9;
+    optional string os=10;
+}
+/*
+extend WBCmd {
+    optional WBCmdPage page=4;
+    optional WBCmdBackground background=5;
+    optional WBCmdStyle style=6;
+    optional WBCmdStroke stroke=7;
+    optional WBCmdPen pen=8;
+    optional WBCmdText text=9;
+    optional WBCmdImage image=10;
+    optional WBCmdClear clear=11;
+    optional WBCmdPlayback playback=12;
+    optional WBCmdUndo undo=13;
+}
+*/
