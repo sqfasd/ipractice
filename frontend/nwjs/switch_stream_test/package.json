@@ -1,0 +1,17 @@
+{
+  "name": "Typhoon Desktop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "chromium-args": "--enable-transparent-visuals --disable-gpu --ignore-certificate-errors --enable-usermedia-screen-capturing",
+  "webkit": {
+    "page-cache": true
+  },
+  "window": {
+    "toolbar": true,
+    "frame": true,
+    "transparent": false,
+    "width": 1080,
+    "height": 720
+  }
+}
