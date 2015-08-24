@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack --module-bind \"vue=vue\" --watch --devtool source-map",
+    "start": "webpack --module-bind \"vue=vue\" --watch --devtool source-map",
     "build": "webpack --module-bind \"vue=vue\""
   },
   "author": "",
