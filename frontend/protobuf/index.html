@@ -15,15 +15,31 @@
         overflow: hidden;
       }
 
-      #whiteboardCanvas {
+      #whiteboardCanvas1 {
+        position: absolute;
+        left: 10px;
+        top: 50px;
+      }
+      #whiteboardCanvas2 {
         border: thick solid #0000FF;
+        position: absolute;
+        left: 10px;
+        top: 50px;
       }
     </style>
 
   </head>
   <body>
+    <div>
+      <button id="blackBtn">black</button>
+      <button id="redBtn">red</button>
+      <button id="eraserBtn">eraser</button>
+    </div>
     <div class="container">
-      <canvas id="whiteboardCanvas">
+      <canvas id="whiteboardCanvas1">
+        Your browser does not support the canvas element.
+      </canvas>
+      <canvas id="whiteboardCanvas2">
         Your browser does not support the canvas element.
       </canvas>
     </div>
