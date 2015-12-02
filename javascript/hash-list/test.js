@@ -67,12 +67,45 @@ describe('hash-list', function() {
     list.select(2, 4, true).should.eql([tom]);
     list.select(3, 4, true).should.eql([]);
 
+    var enumResult = [];
+    list.each(function(item) {
+      enumResult.push(item);
+    });
+    enumResult.should.eql([tom, jack, lucy]);
+
     list.remove('jack');
     list.size().should.equal(2);
     should(list.get('jack')).not.exists;
     list.select(0, 2).should.eql([tom, lucy]);
     list.select(0, 2, true).should.eql([lucy, tom]);
 
+    enumResult = [];
+    list.each(function(item) {
+      enumResult.push(item);
+    });
+    enumResult.should.eql([tom, lucy]);
+
+    list.add('jack', jack);
+
+    enumResult = [];
+    list.each(function(item) {
+      enumResult.push(item);
+    });
+    enumResult.should.eql([tom, lucy, jack]);
+
+    done();
+  });
+
+  it('remove the second issue', function(done) {
+    var list = new HashList();
+    list.add('first', 1);
+    list.add('second', 2);
+    list.remove('second');
+    list.size().should.equal(1);
+    list.select(0, 2).should.eql([1]);
+    list.add('second', 2);
+    list.size().should.equal(2);
+    list.select(0, 2).should.eql([1, 2]);
     done();
   });
 });

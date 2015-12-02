@@ -54,6 +54,11 @@ HashList.prototype.remove = function(key) {
     }
     delete this.map_[key];
     this.size_--;
+    if (this.size_ === 1) {
+      this.tail_ = this.head_;
+    } else if (this.size_ === 0) {
+      this.head_ = this.tail_ = null;
+    }
   }
 };
 
@@ -82,6 +87,14 @@ HashList.prototype.select = function(offset, limit, reverse) {
     limit--;
   }
   return result;
+};
+
+HashList.prototype.each = function(cb) {
+  var node = this.head_;
+  while (node) {
+    cb(node.data);
+    node = node.next;
+  }
 };
 
 module.exports = HashList;
