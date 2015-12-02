@@ -96,7 +96,7 @@ describe('hash-list', function() {
     done();
   });
 
-  it('remove the second issue', function(done) {
+  it('remove the tail issue', function(done) {
     var list = new HashList();
     list.add('first', 1);
     list.add('second', 2);
@@ -105,6 +105,20 @@ describe('hash-list', function() {
     list.select(0, 2).should.eql([1]);
     list.add('second', 2);
     list.size().should.equal(2);
+    list.select(0, 2).should.eql([1, 2]);
+    done();
+  });
+
+  it('remove the only one issue', function(done) {
+    var list = new HashList();
+    list.add('first', 1);
+    list.remove('first');
+    list.size().should.equal(0);
+    list.select(0, 2).should.eql([]);
+    list.add('first', 1);
+    list.size().should.equal(1);
+    list.select(0, 2).should.eql([1]);
+    list.add('second', 2);
     list.select(0, 2).should.eql([1, 2]);
     done();
   });

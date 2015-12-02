@@ -52,13 +52,15 @@ HashList.prototype.remove = function(key) {
     if (next) {
       next.prev = prev;
     }
+    if (node === this.head_ && node === this.tail_) {
+      this.head_ = this.tail_ = null;
+    } else if (node === this.tail_) {
+      this.tail_ = prev;
+    } else if (node === this.head_) {
+      this.head_ = next;
+    }
     delete this.map_[key];
     this.size_--;
-    if (this.size_ === 1) {
-      this.tail_ = this.head_;
-    } else if (this.size_ === 0) {
-      this.head_ = this.tail_ = null;
-    }
   }
 };
 
