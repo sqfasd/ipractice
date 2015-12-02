@@ -43,6 +43,7 @@ var pson = new PSON.ProgressivePair(['name1234567', 'age1234567', 'sex1234567', 
 
 var UserProto2 = ProtoBuf2(fs.readFileSync('./user.proto'));
 
+
 var input = {
   name1234567: 'shanqingfeng',
   age1234567: 27,
@@ -58,8 +59,12 @@ user.msg1234567 = 'hello my name is ...';
 
 var length = 0;
 
-function raw(i) {
+function encodejson(i) {
   return JSON.stringify(i);
+}
+
+function decodejson(i) {
+  return JSON.parse(i);
 }
 
 function encodepb(i) {
@@ -86,17 +91,21 @@ function decodepb2(i) {
   return UserProto2.User.decode(i);
 }
 
-console.log('----', encodepb2(input));
-console.log('----', decodepb2(encodepb2(input)));
+var count = 100000;
 
-var count = 10000;
-
-console.time('raw');
+console.time('encodejson');
 for (var i = 0; i < count; i++) {
-  length += raw(input).length;
+  length += encodejson(input).length;
 }
-console.log('raw total length', length);
-console.timeEnd('raw');
+console.log('encodejson total length', length);
+console.timeEnd('encodejson');
+
+var enc = encodejson(input);
+console.time('decodejson');
+for (var i = 0; i < count; i++) {
+  decodejson(enc);
+}
+console.timeEnd('decodejson');
 
 length = 0;
 console.time('encodepb');
@@ -106,7 +115,7 @@ for (var i = 0; i < count; i++) {
 console.log('encodepb total length', length);
 console.timeEnd('encodepb');
 
-var enc = encodepb(user);
+enc = encodepb(user);
 console.time('decodepb');
 for (var i = 0; i < count; i++) {
   decodepb(enc);
