@@ -34,6 +34,8 @@ describe('hash-list', function() {
     list.select(0, 1).should.eql([tom]);
     list.select(0, 10).should.eql([tom]);
     list.select(1, 10).should.eql([]);
+    list.select(0, -1).should.eql([]);
+    list.select(-1, 1).should.eql([tom]);
 
     list.select(0, 1, true).should.eql([tom]);
     list.select(0, 10).should.eql([tom]);
@@ -120,6 +122,21 @@ describe('hash-list', function() {
     list.select(0, 2).should.eql([1]);
     list.add('second', 2);
     list.select(0, 2).should.eql([1, 2]);
+    done();
+  });
+
+  it('test pop', function(done) {
+    var list = new HashList();
+    should.not.exists(list.pop());
+    list.add(1, 1);
+    list.size().should.equal(1);
+    list.pop().should.equal(1);
+    list.size().should.equal(0);
+    list.add(2, 2);
+    list.add(3, 3);
+    list.size().should.equal(2);
+    list.pop().should.equal(2);
+    list.size().should.equal(1);
     done();
   });
 });

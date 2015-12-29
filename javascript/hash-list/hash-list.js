@@ -61,6 +61,24 @@ HashList.prototype.remove = function(key) {
     }
     delete this.map_[key];
     this.size_--;
+    return node.data;
+  }
+  return null;
+};
+
+HashList.prototype.pop = function() {
+  if (!this.head_) {
+    return null;
+  }
+  this.size_--;
+  var head = this.head_;
+  if (this.head_ === this.tail_) {
+    this.head_ = this.tail_ = null;
+    return head.data;
+  } else {
+    this.head_ = this.head_.next;
+    this.head_.prev = null;
+    return head.data;
   }
 };
 
