@@ -24,7 +24,8 @@ using namespace std;
 #define CERROR(str) (string(str) + ": " + ::strerror(errno))
 #define ARRAY_LEN(arr) (sizeof(arr) / sizeof(arr[0]))
 
-const int MAX_BUF_LEN = 512;
+// const int MAX_BUF_LEN = 1472;
+const int MAX_BUF_LEN = 8192;
 const int EPOLL_EVENT_BATCH_SIZE = 4096;
 
 inline int CreateUdpSocket(const struct sockaddr_in& addr, bool reuse_addr) {
@@ -61,6 +62,11 @@ inline int SetNonblocking(int fd) {
 }
 
 inline const char* SockAddrToCString(struct sockaddr_in& addr) {
-  static char buf[128] = {0};
-  return inet_ntop(AF_INET, &addr, buf, sizeof(buf));
+  static char ip[32];
+  static char buf[48];
+  ::memset(ip, 0, sizeof(ip));
+  ::memset(buf, 0, sizeof(buf));
+  ::inet_ntop(AF_INET, &addr, ip, sizeof(ip));
+  ::sprintf(buf, "%s:%d", ip, ::ntohs(addr.sin_port));
+  return buf;
 }
