@@ -29,8 +29,6 @@ int main(int argc, char* argv[]) {
   addr.sin_addr.s_addr = INADDR_ANY;
 
   int socket = CreateUdpSocket(addr, true);
-  // FILE* file = ::fopen("./test.pcm", "w+");
-  // CHECK(file);
 
   unsigned char buf[MAX_BUF_LEN] = {0};
   struct sockaddr_in client_addr;
@@ -44,6 +42,8 @@ int main(int argc, char* argv[]) {
                        (socklen_t*)&addr_len);
     if (n > 0) {
       string client_addr_str = SockAddrToCString(client_addr);
+      LOG(INFO) << "receive " << n << " bytes from " << client_addr_str;
+
       Connection* conn = nullptr;
       auto iter = connections.find(client_addr_str);
       if (iter == connections.end()) {
@@ -53,20 +53,55 @@ int main(int argc, char* argv[]) {
         conn = iter->second;
       }
       buf[n] = 0;
-      // conn->ProcessPacket(buf, n);
-      if (!::strcmp((const char*)buf, "disconnect")) {
+      if (!::strcmp((const char*)buf, "connect")) {
+        LOG(INFO) << conn->GetID() << " connected";
+      } else if (!::strcmp((const char*)buf, "disconnect")) {
+        LOG(INFO) << conn->GetID() << " disconnected";
         connections.erase(client_addr_str);
-      }
-      if (::strcmp((const char*)buf, "connect")) {
-        // ::fwrite(buf, 1, n, file);
-        for (auto& it: connections) {
+      } else {
+        // conn->ReceivePacket(buf, n);
+        // conn->Send(buf, n);
+        for (auto& it : connections) {
           if (it.second->GetID() != client_addr_str) {
             int ret = it.second->Send(buf, n);
-            LOG(INFO) << "send to " << it.second->GetID() << ": " + ret;
+            LOG(INFO) << "send to " << it.second->GetID() << " " << ret << " bytes";
           }
         }
       }
-      LOG(INFO) << "from " << client_addr_str << ": [" << buf << "]";
+      continue;
+
+      AudioFrame compound_frame;
+      map<string, AudioFrame*> private_frames;
+
+      for (auto& it : connections) {
+        conn = it.second;
+        AudioFrame* tmp = conn->GetOneFrame();
+        if (tmp != nullptr) {
+          private_frames[conn->GetID()] = tmp;
+          if (compound_frame.IsEmpty()) {
+            compound_frame.Copy(*tmp);
+          } else {
+            compound_frame.AddFrame(*tmp);
+          }
+        }
+      }
+      LOG(INFO) << "compound_frame samples " << compound_frame.Length();
+      for (auto& it : connections) {
+        conn = it.second;
+        AudioFrame* its_last_frame = private_frames[conn->GetID()];
+        if (its_last_frame != nullptr) {
+          compound_frame.Substract(*its_last_frame);
+        }
+        if (!compound_frame.IsEmpty()) {
+          unsigned char* sample_data = compound_frame.ToSampleData();
+          int bytes_send = conn->Send(sample_data, compound_frame.Length() * 2);
+          LOG(INFO) << "send " << bytes_send << " bytes to " << conn->GetID();
+          ::free(sample_data);
+        }
+      }
+      for (auto& it : private_frames) {
+        delete it.second;
+      }
     } else if (n == 0) {
       LOG(INFO) << "peer shutdown: " << SockAddrToCString(client_addr);
     } else {
@@ -75,5 +110,4 @@ int main(int argc, char* argv[]) {
   }
   LOG(INFO) << "server stoped";
   ::shutdown(socket, SHUT_RDWR);
-  // ::fclose(file);
 }

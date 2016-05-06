@@ -6,6 +6,8 @@
 #include <sys/socket.h>
 #include <string>
 
+#include "audio_frame.h"
+
 namespace mcu {
 
 class Connection {
@@ -14,7 +16,7 @@ class Connection {
       : id_(id), addr_(addr), socket_(socket) {
   }
   ~Connection() {}
-  void ProcessPacket(unsigned char* packet, int n);
+  void ReceivePacket(unsigned char* packet, int n);
   std::string GetID() const {
     return id_;
   }
@@ -26,11 +28,21 @@ class Connection {
            (struct sockaddr*)&addr_,
            sizeof(addr_));
   }
+  AudioFrame* GetOneFrame() {
+    if (frame_queue_.empty()) {
+      return nullptr;
+    } else {
+      AudioFrame* f = frame_queue_.front();
+      frame_queue_.pop();
+      return f;
+    }
+  }
 
  private:
   std::string id_;
   struct sockaddr_in addr_;
   int socket_;
+  std::queue<AudioFrame*> frame_queue_;
 };
 
 }
